@@ -1,0 +1,47 @@
+ABAB 문법 정리
+
+Hello world
+    ```
+    REPORT ZHELLOWORLD.
+
+    START-OF-SELECTION.
+    WRITE: 'Hello, World!'.
+    ```
+
+기초 자료형
+    숫자형 자료형
+
+    I (Integer): 정수형
+    P (Packed number): 소수를 포함할 수 있는 숫자, 정밀도 설정 가능
+    F (Floating Point Number): 부동 소수점 숫자
+    C (Character): 고정 길이 문자열
+    N (Numeric Text): 숫자만 포함할 수 있는 문자열
+    D (Date): 날짜 형식 YYYYMMDD
+    T (Time): 시간 형식 HHMMSS
+    문자형 자료형
+
+    STRING: 가변 길이 문자열
+    XSTRING: 가변 길이 바이너리 데이터
+    논리형 자료형
+
+    X (Hexadecimal): 16진수 값을 저장, 주로 바이너리 데이터에 사용
+
+제어문
+조건문
+    IF condition1.
+    " 조건1이 참일 때 실행될 코드
+    ELSEIF condition2.
+    " 조건2가 참일 때 실행될 코드
+    ELSE.
+    " 위 조건들이 모두 거짓일 때 실행될 코드
+    ENDIF.
+반복문
+반복문(DO)
+    ```
+    DO 5 TIMES.
+    WRITE: / 'Hello, ABAP!'.
+    ENDDO.
+    ```
+반복문()
+
+
