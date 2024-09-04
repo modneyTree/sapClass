@@ -28,20 +28,47 @@ Hello world
 
 제어문
 조건문
-    IF condition1.
-    " 조건1이 참일 때 실행될 코드
-    ELSEIF condition2.
-    " 조건2가 참일 때 실행될 코드
+    DATA: lv_score TYPE I VALUE 85.
+
+    IF lv_score >= 90.
+    WRITE: / 'Excellent!'.
+    ELSEIF lv_score >= 75.
+    WRITE: / 'Good Job!'.
     ELSE.
-    " 위 조건들이 모두 거짓일 때 실행될 코드
+    WRITE: / 'Please try again.'.
     ENDIF.
+
 반복문
 반복문(DO)
-    ```
     DO 5 TIMES.
     WRITE: / 'Hello, ABAP!'.
     ENDDO.
-    ```
-반복문()
 
+반복문 (WHILE)
+    DATA: lv_counter TYPE I VALUE 1.
 
+    WHILE lv_counter <= 5.
+    WRITE: / 'Count = ', lv_counter.
+    lv_counter = lv_counter + 1.
+    ENDWHILE.
+
+반복문 (LOOP AT)
+    TYPES: BEGIN OF ty_student,
+            name TYPE STRING,
+            grade TYPE I,
+        END OF ty_student.
+
+    DATA: it_students TYPE TABLE OF ty_student,
+        wa_student TYPE ty_student.
+
+    wa_student-name = 'John'.
+    wa_student-grade = 92.
+    APPEND wa_student TO it_students.
+
+    wa_student-name = 'Jane'.
+    wa_student-grade = 88.
+    APPEND wa_student TO it_students.
+
+    LOOP AT it_students INTO wa_student.
+    WRITE: / wa_student-name, wa_student-grade.
+    ENDLOOP.
