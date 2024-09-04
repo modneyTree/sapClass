@@ -1,16 +1,32 @@
-SSU-20 Welcome1234 28716167062623798779(나)
+주의사항
+    Z
+    00 --> 자기 번호 입력할 것
+    활성화를 해야한다.
 
-su01
+에러 원인
+    사용권한:
 
-User : SSU-20
-Last name: 하이삭
-hankhank11
+용어정리
+    CR == 커밋 비슷
+    
+로그인
+    SSU-20 Welcome1234 28716167062623798779
+
+    su01    // 로근인 창
+
+    User : SSU-20
+    hankhank11
+    Last name: 하이삭
+
+    로그인 락 풀기 : su01에서 락 버튼
+
+    도메인 만들 때 필요한 키 : 28716167062623798779
 
 티코드(전부 암기할 것): 
     SE80: 통합
     se38: 프로그램 생성/변경/조회
     se37: 함수
-    se11: dictionary, Table
+    se11: dictionary, Table 같은 Object를 생성
     se16: 데이터 테이블 만들거임    //SE16 -> SE16n 변경
     se21: 패키지 만들거임
     se24 : 클래스 생성/등등
@@ -19,7 +35,7 @@ hankhank11
     작동 안 될 때-> 처음 화면을 가서 할 것
     /n : 그 화면에서 바로 이동 해
     /o : 화면을 하나 더 띄우면서 
-    /nex : 
+    /nex : 종료
 
 00 --> 자기 번호를 입력할 것!!
 
@@ -32,27 +48,21 @@ hankhank11
 
 패키지를 만들거임 SE21
 
-로그인 락을 풀기
 
 
 
-se09 : 개발 클래스 생성 확인
+
+se09 : 개발 클래스 생성 확인??? //is 이상한데??
 
 
 3 sap Database
-학생 TABLE 
-필드: 타입과 사이즈 필수
-    타입과 사이즈는 data element
-    도메인이 data element 관리
+TABLE : ex: 학생
+필드: 타입과 사이즈 필수    
+    크기순서:  필드 >> element >> domain
+    관리:
+        타입과 사이즈는 data element
+        도메인이 data element 관리
 레코드
-
-
-*
-    테이블
-
-    필드
-    element
-    domain
 
 
 DOMAIN
@@ -108,15 +118,12 @@ DOMAIN 실습
 
     Technical Settings
 
-    무조건: 00 -> 20 (자기번호)
-
     element를 만들지 않았음
         직접 지정했다
 
     데이터확인
         se11 : 
-        se16 -> se16n (여기서) 실해ㅇ버튼 f8
+        se16 -> se16n (여기서) 실행버튼 f8
     입력이 가능한 이유: 테이블 만들 때 수정 허용 
 
 
-CR == 커밋 비슷
