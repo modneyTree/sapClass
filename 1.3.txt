@@ -8,7 +8,7 @@
 
 용어정리
     CR == 커밋 비슷
-    
+
 로그인
     SSU-20 Welcome1234 28716167062623798779
 
@@ -22,50 +22,89 @@
 
     도메인 만들 때 필요한 키 : 28716167062623798779
 
-티코드(전부 암기할 것): 
-    SE80: 통합
-    se38: 프로그램 생성/변경/조회
-    se37: 함수
-    se11: dictionary, Table 같은 Object를 생성
-    se16: 데이터 테이블 만들거임    //SE16 -> SE16n 변경
-    se21: 패키지 만들거임
-    se24 : 클래스 생성/등등
-    se09: 우리가 들어갈 일 없다
+목차
+목차
+    1 ABAB Workbench 도구
+    2 Package
+    3 SAP Database
+    4 ABAB Dictionary
+    5 ABAP OBJECT: DOMAIN
+    6 ABAP OBJECT: DOMAIN - 실습
+    7 ABAP OBJECT: ELEMENT
+    8 ABAP OBJECT: ELEMENT- 실습
+    9 ABAP OBJECT: TABLE
+    10 ABAP OBJECT:  TABLE- 실습
 
-    작동 안 될 때-> 처음 화면을 가서 할 것
-    /n : 그 화면에서 바로 이동 해
-    /o : 화면을 하나 더 띄우면서 
-    /nex : 종료
+1 ABAB Workbench 도구
+    티코드(전부 암기할 것): 
+        SE80: 통합
+        se38: 프로그램 생성/변경/조회
+        se37: 함수
+        se11: dictionary, Table 같은 Object를 생성
+        se16: 데이터 테이블 만들거임    //SE16 -> SE16n 변경
+        se21: 패키지 만들거임
+        se24 : 클래스 생성/등등
+        se09: 우리가 들어갈 일 없다
 
-00 --> 자기 번호를 입력할 것!!
+        작동 안 될 때-> 처음 화면을 가서 할 것
+        /n : 그 화면에서 바로 이동 해
+        /o : 화면을 하나 더 띄우면서 
+        /nex : 종료
 
-프로그램 vs 티코드  
-    개발자 vs 현업
-    근데 보통은 같이 사용(99%)
-    1 : N 일 수 있다.
+    프로그램 vs 티코드  
+        개발자 vs 현업
+        근데 보통은 같이 사용(99%)
+        1 : N 일 수 있다.
 
-개발 클래스르 만들 것
+    개발 클래스르 만들 것
 
-패키지를 만들거임 SE21
+    패키지를 만들거임 SE21
+    se09 : 개발 클래스 생성 확인??? //is 이상한데??
 
-
-
-
-
-se09 : 개발 클래스 생성 확인??? //is 이상한데??
+2 Package
+    Development Class:  프로그램과 같은 오브젝트를 기능 별로관리 
+        모듈 별로 프로그램을 구분하기 위해 ZSD, ZPP, ZCO 같이 개발 클래스 그룹으로 묶어서 관리
+    개발 클래스 생성(== 패키지 생성)
+        신규CR 생성
+        개발 클래스 생성 확인 : 
+            se80에서 검색
+            se??에서 display
 
 
 3 sap Database
-TABLE : ex: 학생
-필드: 타입과 사이즈 필수    
-    크기순서:  필드 >> element >> domain
-    관리:
-        타입과 사이즈는 data element
-        도메인이 data element 관리
-레코드
+    TABLE : ex: 학생
+    필드: 타입과 사이즈 필수    
+        크기순서:  필드 >> element >> domain
+        관리:
+            타입과 사이즈는 data element
+            도메인이 data element 관리
+4 ABAB Dictionary
+    레코드
 
+    ABAP의 데이터베이스는 Dictionnary객체
+        각각의 필드는 TYPE와 길이를 가지고 있다.
+        => 이 타입과 사이즈를 DATA ELEMENT가 지정해주고
+        그 값을 통제하고 싶을 때, DOMAIN을 사용한다.
 
-DOMAIN
+    1.ABAP Dictionary기능
+        -Type 정의
+        -DB object생성 및 관리
+    2. ABAP Dictionary 3가지 data type
+        Data element: elementary data type 정의 ex. 학교(Char20)
+        Strucures: Data elements의 집합
+        Table types: Strucure의 집합
+    3. Tables and Fields
+        CURR, QUAN, UNIT 포함한 필드에 대해서는 반드시
+            reference table과
+            field를 정의
+    4.ABAP Dictionary의object
+        Table, Data Elements, Domains
+        필드를 정의하는 방법은 3가지
+    5.Two-Level Domain Concept
+
+5 ABABP OBJECT : DOMAIN
+    데이터의 TYPE을 지정하고 정의
+
     KUNNR: sap에서 제공하는 domain , 고객코드
 
 
