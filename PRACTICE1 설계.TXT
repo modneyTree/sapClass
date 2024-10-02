@@ -26,9 +26,9 @@
             GV_FLAG 
 
     AT END
-    
+
     ZCODE 마지막 등장
         GV_END 플래그 설정
 
-
+4. WRITE
 

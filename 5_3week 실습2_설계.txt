@@ -1,0 +1,53 @@
+"1. DATA선언
+구조체 선언
+    학생코드    ZCODE ===002
+    이름        ZKNAME @001  
+    학사경고대상
+    전화번호    ZTEL @001
+    적요
+
+    // 새롭게 만들어야할
+        성적을 한 번이라도 받았는가? ISSCORE
+
+인터널테이블 선언(3 개 -> READ로 여러 테이블 읽음)
+
+기타 변수 선언
+    남학생 등록금 총합
+    여남학생 등록금 총합
+
+
+"2. GET DATA
+SELECT * FROM ZEDT00_001
+INTO CORRESPONDING FIELDS OF TABLE GT_ZEDT001.
+
+SELECT * FROM ZEDT00_002
+INTO CORRESPONDING FIELDS OF TABLE GT_ZEDT002.
+
+SELECT * FROM ZEDT00_003
+INTO CORRESPONDING FIELDS OF TABLE GT_ZEDT003.
+
+정렬
+
+CLEAR: 
+
+조건:
+    성적을 한 번도 받지 않은 학생은 결과물에서 제외하고 출력
+    학사격고대상
+    전화번호
+    전과학생
+    
+
+"3. MODIFY
+    
+
+
+DO문으로 출력할 것
+"4. WRITE DATA
+    조건
+        성적을 한번도 받지 않은 학생은 결과물에서 제외하고 출력
+
+    AT FIRST.
+        WRITE :/ '--------------------------------------------------------------------------'.
+        WRITE :/ '|   학생코드   |          이름          |학사경고대상|       전화번호      |     적요    '.
+        WRITE :/ '--------------------------------------------------------------------------'.
+    ENDAT.
