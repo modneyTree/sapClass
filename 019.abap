@@ -1,0 +1,41 @@
+
+
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_019
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_019.
+
+RANGES GR_SCARR FOR SCARR-CARRID.
+
+DATA : BEGIN OF GS_SCARR,
+  ZCHECK TYPE C,
+      CARRID LIKE SCARR-CARRID,
+      CARRNAME LIKE SCARR-CARRNAME,
+      END OF GS_SCARR.
+DATA : GT_SCARR LIKE TABLE OF GS_SCARR.
+
+GR_SCARR-SIGN = 'I'.
+GR_SCARR-OPTION = 'BT'.
+GR_SCARR-LOW = 'AA'.
+GR_SCARR-HIGH = 'AC'.
+
+APPEND GR_SCARR.
+
+
+GR_SCARR-LOW = 'AD'.
+GR_SCARR-HIGH = 'AZ'.
+APPEND GR_SCARR.
+
+SELECT CARRID
+  CARRNAME
+  FROM SCARR
+  INTO CORRESPONDING FIELDS OF TABLE GT_SCARR
+  WHERE CARRID IN GR_SCARR.
+
+LOOP AT GT_SCARR INTO GS_SCARR.
+  WRITE :/ GS_SCARR-CARRID, GS_SCARR-CARRNAME.
+ENDLOOP.
+
+BREAK-POINT.

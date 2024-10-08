@@ -1,0 +1,36 @@
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_018
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_018.
+
+DATA : BEGIN OF GS_STUDENT.
+INCLUDE TYPE ZEDT20_001.
+DATA : END OF GS_STUDENT.
+DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
+
+CLEAR : GS_STUDENT, GT_STUDENT.
+GS_STUDENT-ZCODE = 'SSU-11'.
+GS_STUDENT-ZPERNR = '000000011'.
+GS_STUDENT-ZKNAME = '유아'.
+GS_STUDENT-ZENAME = 'YOON'.
+GS_STUDENT-ZGENDER = 'F'.
+GS_STUDENT-ZTEL = '01000002222'.
+APPEND GS_STUDENT TO GT_STUDENT.
+
+CLEAR : GS_STUDENT.
+GS_STUDENT-ZCODE = 'SSU-12'.
+GS_STUDENT-ZPERNR = '000000012'.
+GS_STUDENT-ZKNAME = '이제훈'.
+GS_STUDENT-ZENAME = 'HOON'.
+GS_STUDENT-ZGENDER = 'M'.
+GS_STUDENT-ZTEL = '01000002222'.
+
+UPDATE ZEDT20_001 FROM TABLE GT_STUDENT.
+
+IF SY-SUBRC = 0.
+WRITE : / '데이터변경성공'.
+ELSE.
+WRITE :/ '실패'.
+ENDIF.
