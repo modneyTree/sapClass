@@ -5,6 +5,36 @@
 *&---------------------------------------------------------------------*
 REPORT ZEDR20_20.
 
+PARAMETERS : P_ZCODE LIKE ZEDT00_001-ZCODE VISIBLE LENGTH 5.
+
+
+
+
+====================================================
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_20
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_20.
+
+SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME.
+PARAMETERS : P_ZCODE LIKE ZEDT00_001-ZCODE VISIBLE LENGTH 5.
+PARAMETERS : P_ZPERNR TYPE C LENGTH 10 NO-DISPLAY.
+PARAMETERS : P_ZGEN LIKE ZEDT00_001-ZGENDER DEFAULT 'M'.
+SELECTION-SCREEN END OF BLOCK B1.
+
+
+
+====================================================
+
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_20
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_20.
+
 SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME.
 PARAMETERS : P_ZCODE LIKE ZEDT00_001-ZCODE VISIBLE LENGTH 5.
 PARAMETERS : P_ZPERNR TYPE C LENGTH 10 NO-DISPLAY.

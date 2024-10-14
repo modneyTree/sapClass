@@ -1,0 +1,145 @@
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_21
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_21.
+
+TABLES : ZEDT20_001.
+
+DATA : BEGIN OF GS_STUDENT.
+  INCLUDE TYPE ZEDT20_001.
+  DATA : END OF GS_STUDENT.
+DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
+
+SELECT-OPTIONS : S_ZCODE FOR ZEDT20_001-ZCODE.
+
+" 비교
+PARAMETERS : P_ZGEN LIKE ZEDT20_001-ZGENDER.
+
+
+
+"블럭으로 나누기
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_21
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_21.
+
+TABLES : ZEDT20_001.
+
+DATA : BEGIN OF GS_STUDENT.
+  INCLUDE TYPE ZEDT20_001.
+  DATA : END OF GS_STUDENT.
+DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
+
+
+SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME.
+  SELECT-OPTIONS : S_ZCODE FOR ZEDT20_001-ZCODE.
+SELECTION-SCREEN END OF BLOCK B1.
+
+SELECTION-SCREEN BEGIN OF BLOCK B2 WITH FRAME.
+  PARAMETERS : P_ZGEN LIKE ZEDT20_001-ZGENDER.
+SELECTION-SCREEN END OF BLOCK B2.
+
+
+SELECT * FROM ZEDT20_001
+  INTO CORRESPONDING FIELDS OF TABLE GT_STUDENT
+  WHERE ZCODE IN S_ZCODE
+  AND ZGENDER = P_ZGEN.
+
+IF GT_STUDENT[] IS NOT INITIAL.
+  CLEAR : GS_STUDENT.
+  LOOP AT GT_STUDENT INTO GS_STUDENT.
+    WRITE :/ GS_STUDENT-ZCODE, GS_STUDENT-ZKNAME.
+  ENDLOOP.
+ELSE.
+  WRITE :/ '데이터 없음'.
+ENDIF.
+
+
+
+
+"5) MODIF
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_21
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_21.
+
+TABLES : ZEDT20_001.
+
+DATA : BEGIN OF GS_STUDENT.
+  INCLUDE TYPE ZEDT20_001.
+  DATA : END OF GS_STUDENT.
+DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
+
+
+SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME.
+  SELECT-OPTIONS : S_ZCODE FOR ZEDT20_001-ZCODE.
+SELECTION-SCREEN END OF BLOCK B1.
+
+SELECTION-SCREEN BEGIN OF BLOCK B2 WITH FRAME.
+  PARAMETERS : P_CH1 AS CHECKBOX DEFAULT 'X' MODIF ID M1.
+  PARAMETERS : P_CH2 AS CHECKBOX MODIF ID M2.
+SELECTION-SCREEN END OF BLOCK B2.
+
+AT SELECTION-SCREEN OUTPUT.
+  LOOP AT SCREEN.
+    IF SCREEN-GROUP1 = 'M2'.
+      SCREEN-INPUT = '0'.
+      MODIFY SCREEN.
+    ENDIF.
+  ENDLOOP.
+
+
+
+
+
+
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_21
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_21.
+
+TABLES : ZEDT20_001.
+
+DATA : BEGIN OF GS_STUDENT.
+  INCLUDE TYPE ZEDT20_001.
+  DATA : END OF GS_STUDENT.
+DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
+
+
+
+SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME.
+  SELECT-OPTIONS : S_ZCODE FOR ZEDT20_001-ZCODE.
+  PARAMETERS : P_ZPERNR LIKE ZEDT20_001-ZPERNR MODIF ID M1.
+  PARAMETERS : P_ZGEN LIKE ZEDT20_001-ZGENDER MODIF ID M2.
+SELECTION-SCREEN END OF BLOCK B1.
+
+SELECTION-SCREEN BEGIN OF BLOCK B2 WITH FRAME.
+  PARAMETERS : P_R1 RADIOBUTTON GROUP R1 DEFAULT 'X' USER-COMMAND UC1.
+  PARAMETERS : P_R2 RADIOBUTTON GROUP R1.
+SELECTION-SCREEN END OF BLOCK B2.
+
+AT SELECTION-SCREEN OUTPUT.
+  LOOP AT SCREEN.
+    IF SCREEN-GROUP1 = 'M2'.
+      IF P_R1 = 'X'.
+        SCREEN-ACTIVE = '1'.
+      ELSEIF P_R2 = 'X'.
+        SCREEN-ACTIVE = '0'.
+      ENDIF.
+    ENDIF.
+    MODIFY SCREEN.
+  ENDLOOP.
+
+
+
+
+
+  
