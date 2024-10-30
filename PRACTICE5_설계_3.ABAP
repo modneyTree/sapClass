@@ -3,7 +3,7 @@
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZEDR00_PRACTICE005 MESSAGE-ID ZMED00.
+REPORT ZEDR20_PRACTICE005 MESSAGE-ID ZMED20.
 TABLES : ZEDT20_004, ZEDT20_005, ZEDT20_006, ZEDT20_007, ZEDT20_008.
 
 CONSTANTS : C_X TYPE CHAR1 VALUE 'X'.
@@ -543,10 +543,10 @@ FORM MODIFY_DATA_R2.
 
     CHECK GS_SALARY-ZPAY NE 0.
 
-    PERFORM UPDATE_PAY USING GV_YEAR GV_MON
-                             GS_SALARY-ZPERNR
-                             GS_SALARY-ZPAY
-                       CHANGING GV_CHECK.
+*    PERFORM UPDATE_PAY USING GV_YEAR GV_MON
+*                             GS_SALARY-ZPERNR
+*                             GS_SALARY-ZPAY
+*                       CHANGING GV_CHECK.
     IF GV_CHECK = C_X.
       STOP.
     ENDIF.
@@ -594,9 +594,9 @@ FORM MODIFY_DATA_R3.
     MOVE-CORRESPONDING GS_ASSESS TO GS_ASSESS_ALV.
 
 
-    PERFORM GET_PAY USING GV_YEAR GV_MON
-                          GS_ASSESS_ALV-ZPERNR
-                    CHANGING GS_ASSESS_ALV-ZMON.
+*    PERFORM GET_PAY USING GV_YEAR GV_MON
+*                          GS_ASSESS_ALV-ZPERNR
+*                    CHANGING GS_ASSESS_ALV-ZMON.
 
     PERFORM MAKE_DEPCODE USING GS_ASSESS_ALV-ZDEPCODE
                          CHANGING GS_ASSESS_ALV-ZDEPCODE_NAME.
@@ -625,166 +625,165 @@ ENDFORM.
 *----------------------------------------------------------------------*
 *      -->P_L  text
 *----------------------------------------------------------------------*
-FORM GET_PAY USING PV_YEAR PV_MON P_ZPERNR
-                   CHANGING P_ZMON.
-
-"필드심볼을..알려줄걸..
-
-  CASE PV_MON.
-    WHEN '01'.
-      SELECT SINGLE ZMON01 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '02'.
-      SELECT SINGLE ZMON02 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '03'.
-      SELECT SINGLE ZMON03 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '04'.
-      SELECT SINGLE ZMON04 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '05'.
-      SELECT SINGLE ZMON05 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '06'.
-      SELECT SINGLE ZMON06 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '07'.
-      SELECT SINGLE ZMON07 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '08'.
-      SELECT SINGLE ZMON08 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '09'.
-      SELECT SINGLE ZMON09 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '10'.
-      SELECT SINGLE ZMON10 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '11'.
-      SELECT SINGLE ZMON11 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-    WHEN '012'.
-      SELECT SINGLE ZMON12 FROM ZEDT20_007 INTO P_ZMON
-        WHERE ZPERNR = P_ZPERNR
-        AND ZYEAR = PV_YEAR.
-  ENDCASE.
-
-ENDFORM.
-*&---------------------------------------------------------------------*
-*&      Form  UPDATE_PAY
-*&---------------------------------------------------------------------*
-FORM UPDATE_PAY USING PV_YEAR PV_MON P_ZPERNR P_ZPAY
-                CHANGING PV_CHECK.
-
-  CASE PV_MON.
-    WHEN '01'.
-      UPDATE ZEDT20_007 SET ZMON01 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '02'.
-      UPDATE ZEDT20_007 SET ZMON02 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '03'.
-      UPDATE ZEDT20_007 SET ZMON03 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '04'.
-      UPDATE ZEDT20_007 SET ZMON04 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '05'.
-      UPDATE ZEDT20_007 SET ZMON05 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '06'.
-      UPDATE ZEDT20_007 SET ZMON06 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '07'.
-      UPDATE ZEDT20_007 SET ZMON07 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '08'.
-      UPDATE ZEDT20_007 SET ZMON08 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '09'.
-      UPDATE ZEDT20_007 SET ZMON09 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '10'.
-      UPDATE ZEDT20_007 SET ZMON10 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '11'.
-      UPDATE ZEDT20_007 SET ZMON11 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-    WHEN '12'.
-      UPDATE ZEDT20_007 SET ZMON12 = P_ZPAY
-      WHERE ZPERNR = P_ZPERNR
-      AND   ZYEAR = PV_YEAR.
-
-      IF SY-SUBRC NE 0.
-        PV_CHECK = C_X.
-      ENDIF.
-  ENDCASE.
-
-ENDFORM.
+*FORM GET_PAY USING PV_YEAR PV_MON P_ZPERNR
+*                   CHANGING P_ZMON.
+*
+*
+*  CASE PV_MON.
+*    WHEN '01'.
+*      SELECT SINGLE ZMON01 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '02'.
+*      SELECT SINGLE ZMON02 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '03'.
+*      SELECT SINGLE ZMON03 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '04'.
+*      SELECT SINGLE ZMON04 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '05'.
+*      SELECT SINGLE ZMON05 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '06'.
+*      SELECT SINGLE ZMON06 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '07'.
+*      SELECT SINGLE ZMON07 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '08'.
+*      SELECT SINGLE ZMON08 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '09'.
+*      SELECT SINGLE ZMON09 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '10'.
+*      SELECT SINGLE ZMON10 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '11'.
+*      SELECT SINGLE ZMON11 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*    WHEN '012'.
+*      SELECT SINGLE ZMON12 FROM ZEDT20_007 INTO P_ZMON
+*        WHERE ZPERNR = P_ZPERNR
+*        AND ZYEAR = PV_YEAR.
+*  ENDCASE.
+*
+*ENDFORM.
+**&---------------------------------------------------------------------*
+**&      Form  UPDATE_PAY
+**&---------------------------------------------------------------------*
+*FORM UPDATE_PAY USING PV_YEAR PV_MON P_ZPERNR P_ZPAY
+*                CHANGING PV_CHECK.
+*
+*  CASE PV_MON.
+*    WHEN '01'.
+*      UPDATE ZEDT20_007 SET ZMON01 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '02'.
+*      UPDATE ZEDT20_007 SET ZMON02 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '03'.
+*      UPDATE ZEDT20_007 SET ZMON03 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '04'.
+*      UPDATE ZEDT20_007 SET ZMON04 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '05'.
+*      UPDATE ZEDT20_007 SET ZMON05 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '06'.
+*      UPDATE ZEDT20_007 SET ZMON06 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '07'.
+*      UPDATE ZEDT20_007 SET ZMON07 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '08'.
+*      UPDATE ZEDT20_007 SET ZMON08 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '09'.
+*      UPDATE ZEDT20_007 SET ZMON09 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '10'.
+*      UPDATE ZEDT20_007 SET ZMON10 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '11'.
+*      UPDATE ZEDT20_007 SET ZMON11 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*    WHEN '12'.
+*      UPDATE ZEDT20_007 SET ZMON12 = P_ZPAY
+*      WHERE ZPERNR = P_ZPERNR
+*      AND   ZYEAR = PV_YEAR.
+*
+*      IF SY-SUBRC NE 0.
+*        PV_CHECK = C_X.
+*      ENDIF.
+*  ENDCASE.
+*
+*ENDFORM.
