@@ -1,0 +1,31 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZEDR20_34_TOP
+*&---------------------------------------------------------------------*
+TABLES : ZEDT20_001.
+
+DATA : GS_STUDENT TYPE ZEDT20_001.
+DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
+
+DATA : BEGIN OF GS_ALV.
+  INCLUDE TYPE ZEDT20_001.
+DATA : ZGENDER_NAME(4).
+DATA : END OF GS_ALV.
+DATA : GT_ALV LIKE TABLE OF GS_ALV.
+
+DATA : OK_CODE TYPE SY-UCOMM.
+
+"객체변수선언
+DATA : GC_CUSTOM TYPE REF TO CL_GUI_CUSTOM_CONTAINER.
+
+"그리드생성
+DATA : GC_GRID TYPE REF TO CL_GUI_ALV_GRID.
+
+"필드카탈로그
+DATA : GS_FIELDCAT TYPE LVC_S_FCAT.
+DATA : GT_FIELDCAT TYPE LVC_T_FCAT.
+"레이아웃
+DATA : GS_LAYOUT TYPE LVC_S_LAYO.
+
+"SORT
+DATA : GS_SORT TYPE LVC_S_SORT.
+DATA : GT_SORT TYPE LVC_T_SORT.
