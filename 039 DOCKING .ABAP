@@ -1,16 +1,16 @@
 *&---------------------------------------------------------------------*
-*& Report ZEDR20_36
-*& Report ZEDR20_36
+*& Report ZEDR20_39
+*& Report ZEDR20_39
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZEDR20_36.
+REPORT ZEDR20_39 MESSAGE-ID ZMED20.
 
-INCLUDE ZEDR20_36_TOP.
-INCLUDE ZEDR20_36_SCR.
-INCLUDE ZEDR20_36_F01.
-INCLUDE ZEDR20_36_PBO.
-INCLUDE ZEDR20_36_PAI.
+INCLUDE ZEDR20_39_TOP.
+INCLUDE ZEDR20_39_SCR.
+INCLUDE ZEDR20_39_F01.
+INCLUDE ZEDR20_39_PBO.
+INCLUDE ZEDR20_39_PAI.
 
 INITIALIZATION.
   PERFORM SET_INIT.
