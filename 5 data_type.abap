@@ -1,0 +1,6 @@
+" data type 1
+
+"Predefined ABAP TYPE
+DATA : GV_TEXT1 VALEU 'A'.
+DATA : GV_TEXT2 LENGTH 3 TYPE C VAULE 'ABC'.
+DATA : GV_TE
