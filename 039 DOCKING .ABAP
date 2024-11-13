@@ -6,6 +6,7 @@
 *&---------------------------------------------------------------------*
 REPORT ZEDR20_39 MESSAGE-ID ZMED20.
 
+INCLUDE ZEDR20_39_CLS.
 INCLUDE ZEDR20_39_TOP.
 INCLUDE ZEDR20_39_SCR.
 INCLUDE ZEDR20_39_F01.

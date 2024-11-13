@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZEDR20_36_PBO
+*&  Include           ZEDR20_39_PBO
 *&---------------------------------------------------------------------*
 
 *&---------------------------------------------------------------------*
@@ -27,6 +27,7 @@ MODULE SET_ALV OUTPUT.
   PERFORM FIELD_CATALOG.
   PERFORM ALV_LAYOUT.
   PERFORM ALV_SORT.
+  PERFORM CLASS_EVENT.
   PERFORM CALL_ALV.
 
 ENDMODULE.
