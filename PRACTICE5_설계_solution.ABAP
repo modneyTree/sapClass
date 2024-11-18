@@ -221,14 +221,14 @@ ENDFORM.
 *&---------------------------------------------------------------------*
 FORM SELECT_DATA_R1 .
 
-  CLEAR R_FLAG.
+  CLEAR R_FLAG. "R_FLAG 초기화
 
-  IF P_CH1 = C_X.
-  ELSE.
-    R_FLAG-SIGN = 'I'.
+  IF P_CH1 = C_X. 
+  ELSE. "퇴직상태 체크박스 체크 안되어있을때
+    R_FLAG-SIGN = 'I'.  " I:include, E:exclude
     R_FLAG-OPTION = 'BT'.
     R_FLAG-LOW = ' '.
-    APPEND R_FLAG.
+    APPEND R_FLAG.  "
     R_FLAG-LOW = C_X.
     APPEND R_FLAG.
   ENDIF.
