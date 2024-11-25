@@ -1,9 +1,11 @@
 *&---------------------------------------------------------------------*
-*& Report ZEDR20_PRACTICE002
+*& Report ZEDR20_016
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZEDR20_PRACTICE002.
+REPORT ZEDR20_016.
+
+*&---------------------------------------------------------------------*
 
 DATA : GS_STUDENT TYPE ZEDT20_001.
 DATA : GT_STUDENT LIKE TABLE OF GS_STUDENT.
@@ -13,7 +15,7 @@ DATA : BEGIN OF GS_MAJOR,
       ZCODE LIKE ZEDT20_001-ZCODE,
       ZMNAME LIKE ZEDT20_002-ZMNAME,  " 전공명
       END OF GS_MAJOR.
-DATA : GT_MAJOR LIKE TABLE OF GS_MAJOR WITH NON-UNIQUE KEY ZCODE. 
+DATA : GT_MAJOR LIKE TABLE OF GS_MAJOR WITH NON-UNIQUE KEY ZCODE.
 
 CLEAR : GS_MAJOR, GT_MAJOR.
 CLEAR : GS_STUDENT, GT_STUDENT.
@@ -36,8 +38,7 @@ BREAK-POINT.
 
 LOOP AT GT_STUDENT INTO GS_STUDENT.
   CLEAR : GS_MAJOR.
-  READ TABLE GT_MAJOR WITH TABLE KEY ZCODE = GS_STUDENT-ZCODE
-  INTO GS_MAJOR.
+  READ TABLE GT_MAJOR WITH TABLE KEY ZCODE = GS_STUDENT-ZCODE INTO GS_MAJOR.
 
   IF SY-SUBRC = 0.
     WRITE : / GS_STUDENT-ZCODE, GS_STUDENT-ZKNAME, GS_MAJOR-ZMNAME.

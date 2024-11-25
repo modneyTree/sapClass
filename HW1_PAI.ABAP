@@ -1,28 +1,28 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZEDR20_37_PBO
+*&  Include           ZEDR20_HW001_PAI
 *&---------------------------------------------------------------------*
-MODULE STATUS_0100 OUTPUT.
-  SET PF-STATUS 'STATUS_0100'.
-  SET TITLEBAR 'T100'.
 
+MODULE EXIT_COMMAND INPUT.
+
+  CASE OK_CODE.
+    WHEN 'BACK' OR 'CANC'.
+      LEAVE TO SCREEN 0.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+  ENDCASE.
 
 ENDMODULE.
 *&---------------------------------------------------------------------*
-*&      Module  SET_ALV  OUTPUT
+*&      Module  USER_COMMAND_0100  INPUT
 *&---------------------------------------------------------------------*
 *       text
 *----------------------------------------------------------------------*
-MODULE SET_ALV OUTPUT.
-
-  IF GC_DOCKING IS INITIAL.
-    PERFORM CREATE_OBJECT.
-    PERFORM FIELD_CATALOG.
-    PERFORM ALV_LAYOUT.
-    PERFORM ALV_SORT.
-    PERFORM CALL_ALV.
-  ELSE.
-    "REFRESH 기능 추가
-    PERFORM REFRESH.
-  ENDIF.
+MODULE USER_COMMAND_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK' OR 'CANC'.
+      LEAVE TO SCREEN 0.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    ENDCASE.
 
 ENDMODULE.
