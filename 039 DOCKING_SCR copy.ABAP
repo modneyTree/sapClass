@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZEDR20_36_SCR
+*&  Include           ZEDR20_39_SCR
 *&---------------------------------------------------------------------*
 SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME.
   SELECT-OPTIONS : S_ZCODE FOR ZEDT20_001-ZCODE DEFAULT 'SSU-01' TO 'SSU-10'.

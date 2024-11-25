@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZEDR20_36_F01
+*&  Include           ZEDR20_39_F01
 *&---------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
 *&  Include           ZCUSTOM_CONTAINER_F01
@@ -223,5 +223,55 @@ ENDFORM.
 *  GS_SORT-FIELDNAME = 'ZCODE'.
 *  GS_SORT-UP = 'X'.
 *  APPEND GS_SORT TO GT_SORT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  ALV_HANDLER_TOOLBAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_E_OBJECT  text
+*      -->P_E_INTERACTIVE  text
+*----------------------------------------------------------------------*
+FORM ALV_HANDLER_TOOLBAR  USING    P_OBJECT TYPE REF TO CL_ALV_EVENT_TOOLBAR_SET
+                                   P_INTERACTIVE.
+  DATA : LS_TOOLBAR TYPE STB_BUTTON.
+
+  LS_TOOLBAR-FUNCTION = 'TEXT'.
+  LS_TOOLBAR-ICON = ICON_CHECKED.
+  LS_TOOLBAR-QUICKINFO = 'INFORMATION'.
+
+  APPEND LS_TOOLBAR TO P_OBJECT->MT_TOOLBAR.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CLASS_EVENT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CLASS_EVENT .
+
+  CREATE OBJECT GO_EVENT.
+
+  SET HANDLER GO_EVENT->HANDLER_TOOLBAR FOR GC_GRID.
+  SET HANDLER GO_EVENT->HANDLER_USER_COMMAND FOR GC_GRID.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  ALV_HANDLER_USER_COMMAND
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_E_UCOMM  text
+*----------------------------------------------------------------------*
+FORM ALV_HANDLER_USER_COMMAND  USING    P_UCOMM.
+
+  CASE P_UCOMM.
+    WHEN 'TEXT'.
+      MESSAGE '학생정보데이터입니다' TYPE 'I'.
+  ENDCASE.
 
 ENDFORM.
