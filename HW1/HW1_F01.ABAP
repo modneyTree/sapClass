@@ -4,38 +4,37 @@
 
 FORM SET_INIT .
 
-    "주문날짜 초기값 세팅
-    IF S_JDATE[] IS INITIAL.
-      CONCATENATE SY-DATUM(4) '01' '01' INTO S_JDATE-LOW.
-      S_JDATE-HIGH = SY-DATUM(6) && '01'. "&&로도 표현 가능 (=CONCATENATE)
-      S_JDATE-SIGN = 'I'.
-      S_JDATE-OPTION = 'BT'.
-  
+  "주문날짜 초기값 세팅
+  IF S_JDATE[] IS INITIAL.
+    CONCATENATE SY-DATUM(4) '01' '01' INTO S_JDATE-LOW.
+    S_JDATE-HIGH = SY-DATUM(6) && '01'. "&&로도 표현 가능 (=CONCATENATE)
+    S_JDATE-SIGN = 'I'.
+    S_JDATE-OPTION = 'BT'.
+
+    CALL FUNCTION 'LAST_DAY_OF_MONTHS'
+      EXPORTING
+        DAY_IN            = S_JDATE-HIGH
+      IMPORTING
+        LAST_DAY_OF_MONTH = S_JDATE-HIGH.
+
+    APPEND S_JDATE.
+  ENDIF.
+
+  "배송날짜 초기값 세팅
+  IF S_DDATE[] IS INITIAL.
+      CONCATENATE SY-DATUM(4) '01' '01' INTO S_DDATE-LOW.
+      S_DDATE-HIGH = SY-DATUM(6) && '01'. "&&로도 표현 가능 (=CONCATENATE)
+      S_DDATE-SIGN = 'I'.
+      S_DDATE-OPTION = 'BT'.
+
       CALL FUNCTION 'LAST_DAY_OF_MONTHS'
-        EXPORTING
-          DAY_IN            = S_JDATE-HIGH
-        IMPORTING
-          LAST_DAY_OF_MONTH = S_JDATE-HIGH.
-  
-      APPEND S_JDATE.
-    ENDIF.
-  
-      "주문날짜 초기값 세팅
-    IF S_RDATE[] IS INITIAL.
-      CONCATENATE SY-DATUM(4) '01' '01' INTO S_RDATE-LOW.
-      S_RDATE-HIGH = SY-DATUM(6) && '01'. "&&로도 표현 가능 (=CONCATENATE)
-      S_RDATE-SIGN = 'I'.
-      S_RDATE-OPTION = 'BT'.
-  
-      CALL FUNCTION 'LAST_DAY_OF_MONTHS'
-        EXPORTING
-          DAY_IN            = S_RDATE-HIGH
-        IMPORTING
-          LAST_DAY_OF_MONTH = S_RDATE-HIGH.
-  
-      APPEND S_RDATE.
-    ENDIF.
-  
+          EXPORTING
+          DAY_IN            = S_DDATE-HIGH
+          IMPORTING
+          LAST_DAY_OF_MONTH = S_DDATE-HIGH.
+
+      APPEND S_DDATE.
+  ENDIF.
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  SET_SCREEN
@@ -238,18 +237,134 @@ FORM FIELD_CATALOG .
   GS_FIELDCAT-COL_POS = 14.
   GS_FIELDCAT-FIELDNAME = 'ZRET_FG_NAME'.
   GS_FIELDCAT-COLTEXT = '반품구분'.
+
+  IF P_CH = 'X'.
+  ELSE.
+    GS_FIELDCAT-NO_OUT = 'X'.
+  ENDIF.
   APPEND GS_FIELDCAT TO GT_FIELDCAT.
 
   CLEAR : GS_FIELDCAT.
   GS_FIELDCAT-COL_POS = 15.
   GS_FIELDCAT-FIELDNAME = 'ZRDATE'.
   GS_FIELDCAT-COLTEXT = '반품일자'.
+
+  IF P_CH = 'X'.
+  ELSE.
+    GS_FIELDCAT-NO_OUT = 'X'.
+  ENDIF.
   APPEND GS_FIELDCAT TO GT_FIELDCAT.
 
+ENDFORM.
+
+FORM FIELD_CATALOG2 .
+
+  CLEAR : GS_FIELDCAT2 , GT_FIELDCAT2.
+
+  " 아이콘 필드 설정
+  GS_FIELDCAT2-COL_POS = 1.
+  GS_FIELDCAT2-FIELDNAME = 'LIGHT_ICON'.
+  GS_FIELDCAT2-COLTEXT = '구분'.
+  GS_FIELDCAT2-ICON = 'X'. "아이콘 표시 활성화
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 2.
+  GS_FIELDCAT2-FIELDNAME = 'ZORDNO'.
+  GS_FIELDCAT2-COLTEXT = '주문번호'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 3.
+  GS_FIELDCAT2-FIELDNAME = 'ZIDCODE'.
+  GS_FIELDCAT2-COLTEXT = '회원ID'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 4.
+  GS_FIELDCAT2-FIELDNAME = 'ZMATNR'.
+  GS_FIELDCAT2-COLTEXT = '제품번호'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 5.
+  GS_FIELDCAT2-FIELDNAME = 'ZMATNAME'.
+  GS_FIELDCAT2-COLTEXT = '제품명'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 6.
+  GS_FIELDCAT2-FIELDNAME = 'ZMTART'.
+  GS_FIELDCAT2-COLTEXT = '제품유형'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
 
 
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 7.
+  GS_FIELDCAT2-FIELDNAME = 'ZVOLUM'.
+  GS_FIELDCAT2-COLTEXT = '수량'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 8.
+  GS_FIELDCAT2-FIELDNAME = 'VRKME'.
+  GS_FIELDCAT2-COLTEXT = '단위'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 9.
+  GS_FIELDCAT2-FIELDNAME = 'ZSLAMT'.
+  GS_FIELDCAT2-COLTEXT = '매출금액'.
+  GS_FIELDCAT2-CURRENCY = 'KRW'.
+  GS_FIELDCAT2-DO_SUM = 'X'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 10.
+  GS_FIELDCAT2-FIELDNAME = 'ZDFLAG_NAME'.
+  GS_FIELDCAT2-COLTEXT = '배송현황'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 11.
+  GS_FIELDCAT2-FIELDNAME = 'ZDGUBUN_NAME'.
+  GS_FIELDCAT2-COLTEXT = '배송지역'.
+  GS_FIELDCAT2-EMPHASIZE = 'X'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 12.
+  GS_FIELDCAT2-FIELDNAME = 'ZDDATE'.
+  GS_FIELDCAT2-COLTEXT = '배송일자'.
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 13.
+  GS_FIELDCAT2-FIELDNAME = 'ZRDATE'.
+  GS_FIELDCAT2-COLTEXT = '반품일자'.
+
+  IF P_CH = 'X'.
+  ELSE.
+    GS_FIELDCAT2-NO_OUT = 'X'.
+  ENDIF.
+
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
+
+  CLEAR : GS_FIELDCAT2.
+  GS_FIELDCAT2-COL_POS = 14.
+  GS_FIELDCAT2-FIELDNAME = 'ZFLAG'.
+  GS_FIELDCAT2-COLTEXT = '반품체크'.
+  GS_FIELDCAT2-EMPHASIZE = 'X'.
+
+  IF P_CH = 'X'.
+  ELSE.
+    GS_FIELDCAT2-NO_OUT = 'X'.
+  ENDIF.
+
+  APPEND GS_FIELDCAT2 TO GT_FIELDCAT2.
 
 ENDFORM.
+
 *&---------------------------------------------------------------------*
 *&      Form  ALV_LAYOUT
 *&---------------------------------------------------------------------*
@@ -288,6 +403,35 @@ FORM ALV_LAYOUT .
   GS_VARIANT-USERNAME = SY-UNAME.
 
 ENDFORM.
+
+FORM ALV_LAYOUT2 .
+
+  CLEAR : GS_LAYOUT2.
+  GS_LAYOUT-ZEBRA = 'X'. " ZEBRA 패턴 활성화
+
+  LOOP AT GT_DELEVER_ALV INTO GS_DELEVER_ALV.
+
+    " 상태에 따른 아이콘 설정
+    CASE GS_DELEVER_ALV-ZFLAG. " 매출 구분에 따라 신호등 색상 설정
+      WHEN 'X'.
+        LIGHT_ICON = '@0A@ @0A@ @08@'. " 빨강-꺼짐-꺼짐
+      WHEN OTHERS.
+        LIGHT_ICON = '@08@ @0A@ @0A@'. " 꺼짐-꺼짐-초록
+
+    ENDCASE.
+
+    GS_DELEVER_ALV-LIGHT_ICON = LIGHT_ICON.
+    MODIFY GT_DELEVER_ALV FROM GS_DELEVER_ALV.
+    CLEAR : GS_DELEVER_ALV.
+
+  ENDLOOP.
+
+  CLEAR : GS_VARIANT.
+  GS_VARIANT-REPORT = SY-REPID.
+  GS_VARIANT-USERNAME = SY-UNAME.
+
+ENDFORM.
+
 *&---------------------------------------------------------------------*
 *&      Form  CALL_ALV
 *&---------------------------------------------------------------------*
@@ -298,40 +442,112 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM CALL_ALV .
 
-  CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
-    EXPORTING
-*      I_BUFFER_ACTIVE               =
-*      I_BYPASSING_BUFFER            =
-*      I_CONSISTENCY_CHECK           =
-*      I_STRUCTURE_NAME              =
-      IS_VARIANT                    = GS_VARIANT
-*      I_SAVE                        =
-*      I_DEFAULT                     = 'X'
-      IS_LAYOUT                     = GS_LAYOUT
-*      IS_PRINT                      =
-*      IT_SPECIAL_GROUPS             =
-*      IT_TOOLBAR_EXCLUDING          =
-*      IT_HYPERLINK                  =
-*      IT_ALV_GRAPHICS               =
-*      IT_EXCEPT_QINFO               =
-*      IR_SALV_ADAPTER               =
-    CHANGING
-      IT_OUTTAB                     = GT_ORDER_ALV
-      IT_FIELDCATALOG               = GT_FIELDCAT
-      IT_SORT                       = GT_SORT
-*      IT_FILTER                     =
-    EXCEPTIONS
-      INVALID_PARAMETER_COMBINATION = 1
-      PROGRAM_ERROR                 = 2
-      TOO_MANY_LINES                = 3
-      OTHERS                        = 4
-          .
-  IF SY-SUBRC <> 0.
-*   Implement suitable error handling here
+  IF P_R1 = 'X'.
+    CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
+      EXPORTING
+*        I_BUFFER_ACTIVE               =
+*        I_BYPASSING_BUFFER            =
+*        I_CONSISTENCY_CHECK           =
+*        I_STRUCTURE_NAME              =
+        IS_VARIANT                    = GS_VARIANT
+*        I_SAVE                        =
+*        I_DEFAULT                     = 'X'
+        IS_LAYOUT                     = GS_LAYOUT
+*        IS_PRINT                      =
+*        IT_SPECIAL_GROUPS             =
+*        IT_TOOLBAR_EXCLUDING          =
+*        IT_HYPERLINK                  =
+*        IT_ALV_GRAPHICS               =
+*        IT_EXCEPT_QINFO               =
+*        IR_SALV_ADAPTER               =
+      CHANGING
+        IT_OUTTAB                     = GT_ORDER_ALV
+        IT_FIELDCATALOG               = GT_FIELDCAT
+        IT_SORT                       = GT_SORT
+*        IT_FILTER                     =
+      EXCEPTIONS
+        INVALID_PARAMETER_COMBINATION = 1
+        PROGRAM_ERROR                 = 2
+        TOO_MANY_LINES                = 3
+        OTHERS                        = 4
+            .
+    IF SY-SUBRC <> 0.
+*     Implement suitable error handling here
+    ENDIF.
+
+  ELSE.
+    CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
+      EXPORTING
+*        I_BUFFER_ACTIVE               =
+*        I_BYPASSING_BUFFER            =
+*        I_CONSISTENCY_CHECK           =
+*        I_STRUCTURE_NAME              =
+        IS_VARIANT                    = GS_VARIANT
+*        I_SAVE                        =
+*        I_DEFAULT                     = 'X'
+        IS_LAYOUT                     = GS_LAYOUT2
+*        IS_PRINT                      =
+*        IT_SPECIAL_GROUPS             =
+*        IT_TOOLBAR_EXCLUDING          =
+*        IT_HYPERLINK                  =
+*        IT_ALV_GRAPHICS               =
+*        IT_EXCEPT_QINFO               =
+*        IR_SALV_ADAPTER               =
+      CHANGING
+        IT_OUTTAB                     = GT_DELEVER_ALV
+        IT_FIELDCATALOG               = GT_FIELDCAT2
+        IT_SORT                       = GT_SORT2
+*        IT_FILTER                     =
+      EXCEPTIONS
+        INVALID_PARAMETER_COMBINATION = 1
+        PROGRAM_ERROR                 = 2
+        TOO_MANY_LINES                = 3
+        others                        = 4
+            .
+    IF SY-SUBRC <> 0.
+*     Implement suitable error handling here
+    ENDIF.
+
   ENDIF.
 
 
 ENDFORM.
+
+*FORM CALL_ALV2 .
+*
+*CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
+*  EXPORTING
+**    I_BUFFER_ACTIVE               =
+**    I_BYPASSING_BUFFER            =
+**    I_CONSISTENCY_CHECK           =
+**    I_STRUCTURE_NAME              =
+*    IS_VARIANT                    = GS_VARIANT
+**    I_SAVE                        =
+**    I_DEFAULT                     = 'X'
+*    IS_LAYOUT                     = GS_LAYOUT2
+**    IS_PRINT                      =
+**    IT_SPECIAL_GROUPS             =
+**    IT_TOOLBAR_EXCLUDING          =
+**    IT_HYPERLINK                  =
+**    IT_ALV_GRAPHICS               =
+**    IT_EXCEPT_QINFO               =
+**    IR_SALV_ADAPTER               =
+*  CHANGING
+*    IT_OUTTAB                     = GT_DELEVER_ALV
+*    IT_FIELDCATALOG               = GT_FIELDCAT2
+*    IT_SORT                       = GT_SORT2
+**    IT_FILTER                     =
+*  EXCEPTIONS
+*    INVALID_PARAMETER_COMBINATION = 1
+*    PROGRAM_ERROR                 = 2
+*    TOO_MANY_LINES                = 3
+*    others                        = 4
+*        .
+*IF SY-SUBRC <> 0.
+** Implement suitable error handling here
+*ENDIF.
+*ENDFORM.
+
 *&---------------------------------------------------------------------*
 *&      Form  MODIFY_DATA
 *&---------------------------------------------------------------------*
@@ -344,7 +560,7 @@ ENDFORM.
 *
 *ENDFORM.
 
-  FORM ALV_SORT .
+ FORM ALV_SORT .
 
   CLEAR : GS_SORT, GT_SORT.
 
@@ -356,6 +572,20 @@ ENDFORM.
   APPEND GS_SORT TO GT_SORT.
 
 ENDFORM.
+
+ FORM ALV_SORT2 .
+
+  CLEAR : GS_SORT2, GT_SORT2.
+
+  GS_SORT2-SPOS = 1.
+  GS_SORT2-FIELDNAME = 'ZIDCODE'.
+  GS_SORT2-UP = 'X'.
+  GS_SORT2-SUBTOT = 'X'.
+
+  APPEND GS_SORT2 TO GT_SORT2.
+
+ENDFORM.
+
 *&---------------------------------------------------------------------*
 *&      Form  CHECK_DATA
 *&---------------------------------------------------------------------*
@@ -364,31 +594,65 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM CHECK_DATA .
+  FORM CHECK_DATA .
 
-  "조회조건 점검
+    "조회조건 점검 :
+    "주문번호를를 입력하면 주문일자를 입력하지 않아도 되지만,
+    "둘 다 입력이 되지 않으면 ERROR를 뿌리며 레포트가 실행되지 않는다.
+    "회원 ID가 입력될 대 반드시 주문일지 입력되어야 한다.
 
-  IF  S_JDATE IS INITIAL .
-  MESSAGE I000.
-  STOP.
-  ENDIF.
+*    IF ( S_ZORDNO IS INITIAL ) AND ( S_JDATE IS INITIAL ).
+*      MESSAGE I000.
+*      EXIT.
+*    ENDIF.
+*
+*    IF ( P_IDCODE IS NOT INITIAL ) AND ( S_JDATE IS INITIAL ).
+*      MESSAGE I000.
+*      EXIT.
+*    ENDIF.
 
-  IF S_ZORDNO IS INITIAL.
-    MESSAGE I000.
-    EXIT.
-  ENDIF.
+    IF ( S_ZORDNO IS INITIAL ) AND ( P_IDCODE IS INITIAL ).
+      MESSAGE E000.
+      STOP.
+    ENDIF.
 
-  "S_ZORNO의 길이가 10자리가 아니면 10자리로 변경
-  LOOP AT S_ZORDNO.
-    IF STRLEN( S_ZORDNO ) NE 10.
-      S_ZORDNO = CONDENSE( S_ZORDNO ).
-      S_ZORDNO = S_ZORDNO+10(10-STRLEN( S_ZORDNO ) ).
+    IF ( P_IDCODE IS NOT INITIAL ) AND ( S_JDATE IS INITIAL ).
+      MESSAGE E000.
+      STOP.
+    ENDIF.
+
+*    IF  S_JDATE IS INITIAL .
+*    MESSAGE I000.
+*    STOP.
+*    ENDIF.
+*
+*    IF S_ZORDNO IS INITIAL.
+*      MESSAGE E000.
+*      EXIT.
+*    ENDIF.
+
+    "S_ZORNO의 길이가 10자리가 아니면 10자리로 변경
+    LOOP AT S_ZORDNO ASSIGNING FIELD-SYMBOL(<fs_s_zordno>).
+    IF <fs_s_zordno>-LOW IS NOT INITIAL.
+      CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+        EXPORTING
+          INPUT  = <fs_s_zordno>-LOW
+        IMPORTING
+          OUTPUT = <fs_s_zordno>-LOW.
+    ENDIF.
+    IF <fs_s_zordno>-HIGH IS NOT INITIAL.
+      CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+        EXPORTING
+          INPUT  = <fs_s_zordno>-HIGH
+        IMPORTING
+          OUTPUT = <fs_s_zordno>-HIGH.
     ENDIF.
   ENDLOOP.
 
-  "전역변수 점검
 
-ENDFORM.
+    "전역변수 점검
+
+  ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  GET_DATA_R1
 *&---------------------------------------------------------------------*
@@ -399,11 +663,67 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM GET_DATA_R1 .
 
+  CLEAR R_FLAG.
+
+  IF P_CH = C_X.
+    R_FLAG-SIGN = 'I'.
+    R_FLAG-OPTION = 'EQ'.
+    R_FLAG-LOW = '1'.
+    APPEND R_FLAG.
+    R_FLAG-LOW = '2'.
+    APPEND R_FLAG.
+
+  ELSE.
+    R_FLAG-SIGN = 'I'.
+    R_FLAG-OPTION = 'EQ'.
+    R_FLAG-LOW = '1'.
+    APPEND R_FLAG.
+  ENDIF.
+
+*  IF P_CH = 'X'.
+*    "반품내역 포함
+*    SELECT * FROM ZEDT20_100
+*    INTO CORRESPONDING FIELDS OF TABLE GT_ORDER
+*    WHERE ( ZORDNO IN S_ZORDNO ) AND ( ZJDATE IN S_JDATE ).
+*
+*  ELSE.
+*    "반품내역 제외
+*    SELECT * FROM ZEDT20_100
+*    INTO CORRESPONDING FIELDS OF TABLE GT_ORDER
+*    WHERE ( ZORDNO IN S_ZORDNO ) AND ( ZJDATE IN S_JDATE ) AND ( ZSALE_FG NE '2' ).
+*  ENDIF.
+
   SELECT * FROM ZEDT20_100
-    INTO CORRESPONDING FIELDS OF TABLE GT_ORDER
-    WHERE ZORDNO IN S_ZORDNO.
+  INTO CORRESPONDING FIELDS OF TABLE GT_ORDER
+  WHERE ( ZORDNO IN S_ZORDNO ) AND ( ZJDATE IN S_JDATE ) AND ( ZSALE_FG IN R_FLAG ).
 
 ENDFORM.
+
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA_R2
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_DATA_R2 .
+
+  IF P_CH = 'X'.
+    "반품내역 포함
+    SELECT * FROM ZEDT20_101
+    INTO CORRESPONDING FIELDS OF TABLE GT_DELEVER
+    WHERE ( ZORDNO IN S_ZORDNO ) AND ( ZDDATE IN S_DDATE ).
+
+  ELSE.
+*    "반품내역 제외
+    SELECT * FROM ZEDT20_101
+    INTO CORRESPONDING FIELDS OF TABLE GT_DELEVER
+    WHERE ( ZORDNO IN S_ZORDNO ) AND ( ZDDATE IN S_DDATE ) AND ( ZFLAG <> 'X' ) .
+  ENDIF.
+
+ENDFORM.
+
 *&---------------------------------------------------------------------*
 *&      Form  MODIFY_DATA_R1
 *&---------------------------------------------------------------------*
@@ -451,6 +771,44 @@ FORM MODIFY_DATA_R1 .
     ENDIF.
 
     APPEND GS_ORDER_ALV TO GT_ORDER_ALV.
+
+  ENDLOOP.
+
+ENDFORM.
+
+
+FORM MODIFY_DATA_R2 .
+
+  LOOP AT GT_DELEVER INTO GS_DELEVER.
+    MOVE-CORRESPONDING GS_DELEVER TO GS_DELEVER_ALV.
+
+    "배송현황 변경
+    IF GS_DELEVER-ZDFLAG = '1'.
+      GS_DELEVER_ALV-ZDFLAG_NAME = '배송시작'.
+    ELSEIF GS_DELEVER-ZDFLAG = '2'.
+      GS_DELEVER_ALV-ZDFLAG_NAME = '배송중'.
+    ELSE.
+      GS_DELEVER_ALV-ZDFLAG_NAME = '배송완료'.
+    ENDIF.
+
+    "배송지역 변경
+    IF GS_DELEVER-ZDGUBUN = '1'.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '서울'.
+    ELSEIF GS_DELEVER-ZDGUBUN = '2'.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '경기'.
+    ELSEIF GS_DELEVER-ZDGUBUN = '3'.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '충청'.
+    ELSEIF GS_DELEVER-ZDGUBUN = '4'.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '경상'.
+    ELSEIF GS_DELEVER-ZDGUBUN = '5'.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '강원'.
+    ELSEIF GS_DELEVER-ZDGUBUN = '6'.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '전라'.
+    ELSE.
+      GS_DELEVER_ALV-ZDGUBUN_NAME = '제주'.
+    ENDIF.
+
+    APPEND GS_DELEVER_ALV TO GT_DELEVER_ALV.
 
   ENDLOOP.
 

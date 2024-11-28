@@ -1,75 +1,58 @@
-FORM CALL_ALV .
+*&---------------------------------------------------------------------*
+*& Report ZEDR20_HW001
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR20_HW001 MESSAGE-ID ZMED20.
 
-  "P_R1이 체크되어 있으면, GT_ORDER_ALV, GT_FIELDCAT, GT_SORT를 채워준다.
-  "P_R2가 체크되어 있으면, GT_DELIVERY_ALV, GT_FIELDCAT2, GT_SORT2를 채워준다.
+INCLUDE ZEDR20_HW001_TOP.
+INCLUDE ZEDR20_HW001_SCR.
+INCLUDE ZEDR20_HW001_F01.
+INCLUDE ZEDR20_HW001_PBO.
+INCLUDE ZEDR20_HW001_PAI.
 
-  
+*****3. 초기값 설정
+INITIALIZATION.
+  PERFORM SET_INIT.
+
+
+*****4. 스크린 제어
+AT SELECTION-SCREEN OUTPUT.
+  PERFORM SET_SCREEN.
+
+*****5. MAIN PROGRAM
+START-OF-SELECTION.
+  PERFORM CHECK_DATA.
+
   CASE C_X.
-    WHEN P_R1.
-    
-      CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
-      EXPORTING
-  *      I_BUFFER_ACTIVE               =
-  *      I_BYPASSING_BUFFER            =
-  *      I_CONSISTENCY_CHECK           =
-  *      I_STRUCTURE_NAME              =
-        IS_VARIANT                    = GS_VARIANT
-  *      I_SAVE                        =
-  *      I_DEFAULT                     = 'X'
-        IS_LAYOUT                     = GS_LAYOUT
-  *      IS_PRINT                      =
-  *      IT_SPECIAL_GROUPS             =
-  *      IT_TOOLBAR_EXCLUDING          =
-  *      IT_HYPERLINK                  =
-  *      IT_ALV_GRAPHICS               =
-  *      IT_EXCEPT_QINFO               =
-  *      IR_SALV_ADAPTER               =
-      CHANGING
-        IT_OUTTAB                     = GT_ORDER_ALV
-        IT_FIELDCATALOG               = GT_FIELDCAT
-        IT_SORT                       = GT_SORT
-  *      IT_FILTER                     =
-      EXCEPTIONS
-        INVALID_PARAMETER_COMBINATION = 1
-        PROGRAM_ERROR                 = 2
-        TOO_MANY_LINES                = 3
-        OTHERS                        = 4
-            .
+    WHEN P_R1. "주문내역
+      PERFORM GET_DATA_R1.
+      IF GT_ORDER[] IS INITIAL.
+        MESSAGE I001.
+        EXIT.
+      ENDIF.
+      PERFORM MODIFY_DATA_R1.
 
+      IF GT_ORDER_ALV[] IS NOT INITIAL.
+        CALL SCREEN 100.
+      ELSE.
+        MESSAGE I000.
+        EXIT.
+      ENDIF.
     WHEN P_R2.
-      CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
-      EXPORTING
-  *      I_BUFFER_ACTIVE               =
-  *      I_BYPASSING_BUFFER            =
-  *      I_CONSISTENCY_CHECK           =
-  *      I_STRUCTURE_NAME              =
-        IS_VARIANT                    = GS_VARIANT
-  *      I_SAVE                        =
-  *      I_DEFAULT                     = 'X'
-        IS_LAYOUT                     = GS_LAYOUT
-  *      IS_PRINT                      =
-  *      IT_SPECIAL_GROUPS             =
-  *      IT_TOOLBAR_EXCLUDING          =
-  *      IT_HYPERLINK                  =
-  *      IT_ALV_GRAPHICS               =
-  *      IT_EXCEPT_QINFO               =
-  *      IR_SALV_ADAPTER               =
-      CHANGING
-        IT_OUTTAB                     = GT_DELEVER_ALV
-        IT_FIELDCATALOG               = GT_FIELDCAT2
-        IT_SORT                       = GT_SORT2
-  *      IT_FILTER                     =
-      EXCEPTIONS
-        INVALID_PARAMETER_COMBINATION = 1
-        PROGRAM_ERROR                 = 2
-        TOO_MANY_LINES                = 3
-        OTHERS                        = 4
-            .
+      PERFORM GET_DATA_R2.
+      IF GT_DELEVER[] IS INITIAL.
+        MESSAGE I001.
+        EXIT.
+      ENDIF.
+      PERFORM MODIFY_DATA_R2.
+
+      IF GT_DELEVER_ALV[] IS NOT INITIAL.
+        CALL SCREEN 200.
+      ELSE.
+        MESSAGE I000.
+        EXIT.
+      ENDIF.
   ENDCASE.
-  
-  IF SY-SUBRC <> 0.
-*   Implement suitable error handling here
-  ENDIF.
 
-
-ENDFORM.
+*  PERFORM GET_DATA.
