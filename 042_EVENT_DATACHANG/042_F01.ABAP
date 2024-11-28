@@ -1,0 +1,317 @@
+
+
+FORM SET_INIT .
+
+ENDFORM.
+
+FORM GET_DATA .
+  SELECT * FROM ZEDT20_001
+    INTO CORRESPONDING FIELDS OF TABLE GT_STUDENT.
+ENDFORM.
+
+FORM CREATE_OBJECT .
+  CREATE OBJECT GC_DOCKING
+    EXPORTING
+*      PARENT                      =
+      REPID                       = SY-REPID
+      DYNNR                       = SY-DYNNR
+*      SIDE                        = DOCK_AT_LEFT
+      EXTENSION                   = 2000
+*      STYLE                       =
+*      LIFETIME                    = lifetime_default
+*      CAPTION                     =
+*      METRIC                      = 0
+*      RATIO                       =
+*      NO_AUTODEF_PROGID_DYNNR     =
+*      NAME                        =
+*    EXCEPTIONS
+*      CNTL_ERROR                  = 1
+*      CNTL_SYSTEM_ERROR           = 2
+*      CREATE_ERROR                = 3
+*      LIFETIME_ERROR              = 4
+*      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+*      others                      = 6
+      .
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+
+  CREATE OBJECT GC_GRID
+    EXPORTING
+*      I_SHELLSTYLE      = 0
+*      I_LIFETIME        =
+      I_PARENT          = GC_DOCKING
+*      I_APPL_EVENTS     = space
+*      I_PARENTDBG       =
+*      I_APPLOGPARENT    =
+*      I_GRAPHICSPARENT  =
+*      I_NAME            =
+*      I_FCAT_COMPLETE   = SPACE
+*    EXCEPTIONS
+*      ERROR_CNTL_CREATE = 1
+*      ERROR_CNTL_INIT   = 2
+*      ERROR_CNTL_LINK   = 3
+*      ERROR_DP_CREATE   = 4
+*      others            = 5
+      .
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+  CREATE OBJECT GO_EVENT.
+
+ENDFORM.
+
+
+FORM FIELD_CATALOG .
+  CLEAR : GS_FIELDCAT, GT_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 1.
+  GS_FIELDCAT-FIELDNAME = 'ZCOLOR'.
+  GS_FIELDCAT-COLTEXT = '표기'.
+  GS_FIELDCAT-ICON = 'X'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR : GS_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 2.
+  GS_FIELDCAT-FIELDNAME = 'ZCODE'.
+  GS_FIELDCAT-COLTEXT = '학생코드'.
+  GS_FIELDCAT-HOTSPOT = 'X'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR : GS_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 3.
+  GS_FIELDCAT-FIELDNAME = 'ZPERNR'.
+  GS_FIELDCAT-COLTEXT = '출석번호'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR : GS_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 4.
+  GS_FIELDCAT-FIELDNAME = 'ZKNAME'.
+  GS_FIELDCAT-COLTEXT = '한글이름'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR : GS_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 5.
+  GS_FIELDCAT-FIELDNAME = 'ZENAME'.
+  GS_FIELDCAT-COLTEXT = '영어이름'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR : GS_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 6.
+  GS_FIELDCAT-FIELDNAME = 'ZGENDER'.
+  GS_FIELDCAT-COLTEXT = '성별'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+
+  CLEAR : GS_FIELDCAT.
+  GS_FIELDCAT-COL_POS = 7.
+  GS_FIELDCAT-FIELDNAME = 'ZTEL'.
+  GS_FIELDCAT-COLTEXT = '전화번호'.
+  GS_FIELDCAT-EDIT = 'X'.
+  APPEND GS_FIELDCAT TO GT_FIELDCAT.
+ENDFORM.
+
+
+FORM ALV_LAYOUT .
+  CLEAR GS_LAYOUT.
+*  GS_LAYOUT-NO_HEADERS = 'X'.
+  GS_LAYOUT-ZEBRA = 'X'.
+
+  CLEAR GS_VARIANT.
+  GS_VARIANT-REPORT = SY-REPID.
+  GS_VARIANT-USERNAME = SY-UNAME.
+ENDFORM.
+
+
+FORM ALV_SORT .
+  GS_SORT-SPOS = 1.
+  GS_SORT-FIELDNAME = 'ZCODE'.
+  GS_SORT-UP = 'X'.
+  APPEND GS_SORT TO GT_SORT.
+ENDFORM.
+
+
+FORM ALV_DISPLAY .
+  CALL METHOD GC_GRID->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*      I_BUFFER_ACTIVE               =
+*      I_BYPASSING_BUFFER            =
+*      I_CONSISTENCY_CHECK           =
+*      I_STRUCTURE_NAME              =
+      IS_VARIANT                    = GS_VARIANT
+      I_SAVE                        = 'A'
+*      I_DEFAULT                     = 'X'
+      IS_LAYOUT                     = GS_LAYOUT
+*      IS_PRINT                      =
+*      IT_SPECIAL_GROUPS             =
+*      IT_TOOLBAR_EXCLUDING          =
+*      IT_HYPERLINK                  =
+*      IT_ALV_GRAPHICS               =
+*      IT_EXCEPT_QINFO               =
+*      IR_SALV_ADAPTER               =
+    CHANGING
+      IT_OUTTAB                     = GT_STUDENT
+      IT_FIELDCATALOG               = GT_FIELDCAT
+      IT_SORT                       = GT_SORT
+*      IT_FILTER                     =
+*    EXCEPTIONS
+*      INVALID_PARAMETER_COMBINATION = 1
+*      PROGRAM_ERROR                 = 2
+*      TOO_MANY_LINES                = 3
+*      others                        = 4
+          .
+  IF SY-SUBRC <> 0.
+*   Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+
+
+FORM REFRESH .
+
+  DATA : LS_STABLE TYPE LVC_S_STBL.
+
+  LS_STABLE-ROW = 'X'.
+  LS_STABLE-COL = 'X'.
+
+  CALL METHOD GC_GRID->REFRESH_TABLE_DISPLAY
+    EXPORTING
+      IS_STABLE      = LS_STABLE
+*      I_SOFT_REFRESH =
+*    EXCEPTIONS
+*      FINISHED       = 1
+*      others         = 2
+          .
+  IF SY-SUBRC <> 0.
+*   Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+
+
+FORM CLASS_EVENT .
+  SET HANDLER GO_EVENT->HANDLER_TOOLBAR FOR GC_GRID.
+  SET HANDLER GO_EVENT->HANDLER_USER_COMMAND FOR GC_GRID.
+  SET HANDLER GO_EVENT->HANDLER_HOTSPOT_CLICK FOR GC_GRID.
+
+  CALL METHOD GC_GRID->REGISTER_EDIT_EVENT
+    EXPORTING
+      I_EVENT_ID = CL_GUI_ALV_GRID=>MC_EVT_MODIFIED
+*    EXCEPTIONS
+*      ERROR      = 1
+*      others     = 2
+          .
+  IF SY-SUBRC <> 0.
+*   Implement suitable error handling here
+  ENDIF.
+
+
+  SET HANDLER GO_EVENT->HANDLER_DATA_CHANGED FOR GC_GRID.
+
+ENDFORM.
+
+
+FORM ALV_HANDLER_TOOLBAR USING P_OBJECT TYPE REF TO CL_ALV_EVENT_TOOLBAR_SET
+                               P_INTERACTIVE.
+
+  DATA : LS_TOOLBAR TYPE STB_BUTTON.
+
+  LS_TOOLBAR-FUNCTION = 'TEXT'.
+  LS_TOOLBAR-ICON = ICON_CHECKED.
+  LS_TOOLBAR-QUICKINFO = 'INFOMATION'.
+
+  APPEND LS_TOOLBAR TO P_OBJECT->MT_TOOLBAR.
+
+ENDFORM.
+
+
+FORM ALV_HANDLER_USER_COMMAND USING P_UCOMM.
+  CASE P_UCOMM.
+    WHEN 'TEXT'.
+      MESSAGE '학생정보데이터입니다.' TYPE 'I'.
+
+      ENDCASE.
+
+ENDFORM.
+
+
+FORM ALV_HANDLER_HOTSPOT_CLICK USING P_ROW_ID TYPE LVC_S_ROW
+                                     P_COLUMN_ID TYPE LVC_S_COL
+                                     P_ROW_NO TYPE LVC_S_ROID.
+  CASE P_COLUMN_ID-FIELDNAME. " COLUMN 제어
+    WHEN 'ZCODE'.
+      READ TABLE GT_STUDENT INTO GS_STUDENT INDEX P_ROW_NO-ROW_ID. " ROW 제어
+      SET PARAMETER ID 'XUS' FIELD GS_STUDENT-ZCODE.
+      CALL TRANSACTION 'SU01'.
+  ENDCASE.
+
+ENDFORM.
+
+
+FORM ALV_HANDLER_DATA_CHANGED USING P_DATA_CHANGED TYPE REF TO CL_ALV_CHANGED_DATA_PROTOCOL
+                                    P_ONF4
+                                    P_ONF4_BEFORE
+                                    P_ONF4_AFTER
+                                    P_UCOMM.
+
+  DATA LS_MODI TYPE LVC_S_MODI.
+  DATA LV_LEN(02).
+
+  CLEAR : LS_MODI, LV_LEN.
+
+  LOOP AT P_DATA_CHANGED->MT_GOOD_CELLS INTO LS_MODI.
+    IF LS_MODI-FIELDNAME = 'ZTEL'.
+      READ TABLE GT_STUDENT INTO GS_STUDENT INDEX LS_MODI-ROW_ID.
+
+      IF LS_MODI-VALUE IS INITIAL.
+        GS_STUDENT-ZCOLOR = ICON_LED_RED.
+      ELSE.
+        LV_LEN = STRLEN( LS_MODI-VALUE ).
+        IF LV_LEN = '10'.
+          GS_STUDENT-ZCOLOR = ICON_LED_GREEN.
+        ELSE.
+          GS_STUDENT-ZCOLOR = ICON_LED_YELLOW.
+        ENDIF.
+      ENDIF.
+
+      MODIFY GT_STUDENT FROM GS_STUDENT INDEX LS_MODI-ROW_ID.
+      CLEAR GS_STUDENT.
+    ENDIF.
+  ENDLOOP.
+
+  PERFORM REFRESH.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  ALV_DATA_CHANGED_FINISHED
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_E_MODIFIED  text
+*      -->P_ET_GOOD_CELLS  text
+*----------------------------------------------------------------------*
+FORM ALV_DATA_CHANGED_FINISHED  USING    P_MODIFIED
+                                         PT_GOOD_CELLS TYPE LVC_T_MODI.
+  "MT_GOOD_CELLS TYPE LVC_T_MODI
+  "LVC_T_MODI TYPE LVC_S_MODI
+  "LVC_S_MODI->FILEDNAME(필드제어), ROW_ID(인덱스제어), VALUE(값제어)
+  DATA : LS_MODI TYPE LVC_S_MODI.
+
+  CLEAR : LS_MODI.
+
+  LOOP AT PT_GOOD_CELLS INTO LS_MODI.
+    IF LS_MODI-FIELDNAME = 'ZTEL'.
+      READ TABLE GT_STUDENT INTO GS_STUDENT INDEX LS_MODI-ROW_ID.
+
+      IF GS_STUDENT-ZCOLOR NE ICON_LED_GREEN.
+        DELETE TABLE GT_STUDENT FROM GS_STUDENT.
+      ENDIF.
+
+      CLEAR GS_STUDENT.
+    ENDIF.
+  ENDLOOP.
+
+ENDFORM.
