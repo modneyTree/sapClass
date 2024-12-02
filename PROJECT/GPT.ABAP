@@ -7,6 +7,7 @@ MODULE USER_COMMAND_0100 INPUT.
       MESSAGE 'APND' TYPE 'I'.
 
     CLEAR : GS_MASTER_ALL.
+    
     GS_MASTER_ALL-ZLFA1_LIFNR = '0000100'.
     GS_MASTER_ALL-ZLFB1_BUKRS = P_BUKRS.
     GS_MASTER_ALL-ZLFA1_KTOKK = P_KTOKK.
@@ -39,3 +40,20 @@ MODULE EXIT_COMMAND INPUT.
       LEAVE PROGRAM.
   ENDCASE.
 ENDMODULE.
+
+GS_MASTER_ALL-ZLFA1_LIFNR가 자동 채번되도록 하고 싶어
+
+" 변경
+DATA : lv_max_lifnr TYPE ??
+SELECT MAX( ZLFA1_LIFNR ) INTO @DATA(lv_max_lifnr) FROM ZEDT20_P001.
+IF lv_max_lifnr IS NOT INITIAL.
+  lv_max_lifnr = lv_max_lifnr + 1.
+ELSE.
+  lv_max_lifnr = '0000001'.
+ENDIF.
+GS_MASTER_ALL-ZLFA1_LIFNR = lv_max_lifnr.
+
+
+ZLFA1_LIFNR 는 CHAR 11 타입이야 
+
+위 코드 완성시켜줘
