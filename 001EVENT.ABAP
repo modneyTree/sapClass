@@ -1,4 +1,4 @@
-USER_COMMAND (OK_CODE로 작동)
+USER_COMMAND (OK_CODE로 작동) (클래스 이벤트가 아니라 툴 바 이벤트로 처리)
     TOOLBAR에 아이콘 만들고 -> 
     - APPEND 기능
     - SAVE 기능
