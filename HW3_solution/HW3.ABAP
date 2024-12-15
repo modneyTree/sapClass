@@ -1,0 +1,45 @@
+*&---------------------------------------------------------------------*
+*& Report ZEDR06_HW003
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ZEDR06_HW003 MESSAGE-ID ZMED06.
+
+INCLUDE ZEDR06_HW003_TOP.
+INCLUDE ZEDR06_HW003_SCR.
+INCLUDE ZEDR06_HW003_F01.
+INCLUDE ZEDR06_HW003_PBO.
+INCLUDE ZEDR06_HW003_PAI.
+
+***** 초기값 설정
+INITIALIZATION.
+PERFORM SET_DATE.
+
+***** 스크린 제어
+AT SELECTION-SCREEN OUTPUT.
+  PERFORM SELECTION_CONTROL.
+
+***** MAIN PROGRAM
+START-OF-SELECTION.
+  PERFORM CHECK_CONDITION. "조회조건 확인
+
+CASE CHECK_X.
+  WHEN P_RORD.
+    PERFORM SELECT_DATA_ORDER.
+    IF GT_ORDER[] IS INITIAL.
+      MESSAGE I001.
+      EXIT.
+    ENDIF.
+    PERFORM MODIFY_DATA_ORDER.
+    CALL SCREEN 100.
+
+  WHEN P_RDEL.
+    PERFORM SELECT_DATA_DELIVERY.
+    IF GT_DELIVERY[] IS INITIAL.
+      MESSAGE I001.
+      EXIT.
+    ENDIF.
+    PERFORM MODIFY_DATA_DELIVERY.
+    CALL SCREEN 200.
+
+ENDCASE.
