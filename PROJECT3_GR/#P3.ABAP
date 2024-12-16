@@ -20,47 +20,35 @@ AT SELECTION-SCREEN OUTPUT.
   PERFORM SET_SCREEN.
 
 START-OF-SELECTION.
-  IF ( P_BUKRS IS INITIAL ) OR ( P_BUKRS2 IS INITIAL ).
+  IF ( P_EBELN IS INITIAL ).
     MESSAGE I000.
     EXIT.
   ENDIF.
 
 " 조건
-*  IF ( P_KTOKK = '3000' ).
-*    " 개인번호가(LFA1-STCD1)가 보인다.
-*
-*  ELSEIF ( P_KTOKK = '2000' ).
-*    " 2000클릭시에는 LFA1-STCD1 , STCD2필드가 보이면 안됨
-*  ENDIF.
-
   CASE C_X.
     WHEN P_R1. "
-      PERFORM MAKE_DATA_HEAD.
-      PERFORM MAKE_DATA_INPUT .
-*      IF GT_MASTER_ALL[] IS INITIAL.
-*        MESSAGE I001.
-*        EXIT.
-*      ENDIF.
+      PERFORM GET_DATA.
+*      PERFORM MODIFY_DATA.
 
-      IF GT_PO_HEAD[] IS NOT INITIAL.
+      IF GT_PO_ITEM[] IS NOT INITIAL.
         CALL SCREEN 100.
       ELSE.
         MESSAGE I000.
         EXIT.
       ENDIF.
     WHEN P_R2.
-*      PERFORM MAKE_DATA.
 *      PERFORM GET_DATA.
-*      PERFORM MODIFY_DATA.
-*      IF GT_MASTER_ALL[] IS INITIAL.
-*        MESSAGE I001.
+**      PERFORM MODIFY_DATA.
+**      IF GT_MASTER_ALL[] IS INITIAL.
+**        MESSAGE I001.
+**        EXIT.
+**      ENDIF.
+*
+*      IF GT_PO_ITEM[] IS NOT INITIAL.
+*        CALL SCREEN 200.
+*      ELSE.
+*        MESSAGE I000.
 *        EXIT.
 *      ENDIF.
-
-      IF GT_PO_HEAD[] IS NOT INITIAL.
-        CALL SCREEN 200.
-      ELSE.
-        MESSAGE I000.
-        EXIT.
-      ENDIF.
    ENDCASE.
