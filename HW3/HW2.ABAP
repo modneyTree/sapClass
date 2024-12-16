@@ -1,15 +1,15 @@
 *&---------------------------------------------------------------------*
-*& Report ZEDR20_HW001
+*& Report ZEDR20_HW003
 *&---------------------------------------------------------------------*
 *&
 *&---------------------------------------------------------------------*
-REPORT ZEDR20_HW001 MESSAGE-ID ZMED20.
+REPORT ZEDR20_HW003 MESSAGE-ID ZMED20.
 
-INCLUDE ZEDR20_HW001_TOP.
-INCLUDE ZEDR20_HW001_SCR.
-INCLUDE ZEDR20_HW001_F01.
-INCLUDE ZEDR20_HW001_PBO.
-INCLUDE ZEDR20_HW001_PAI.
+INCLUDE ZEDR20_HW003_TOP.
+INCLUDE ZEDR20_HW003_SCR.
+INCLUDE ZEDR20_HW003_F01.
+INCLUDE ZEDR20_HW003_PBO.
+INCLUDE ZEDR20_HW003_PAI.
 
 *****3. 초기값 설정
 INITIALIZATION.

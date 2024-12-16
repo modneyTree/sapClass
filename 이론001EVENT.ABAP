@@ -5,11 +5,9 @@
   HOTSPOT EVENT : 각 행을 식별 하고 화면이동
   DOUBLECLICK EVENT : 각 행을 식별하고 메시지 출력
   DATACHANGED EVENT (정합성체크)
-  
 
 
-
-USER_COMMAND (OK_CODE로 작동) (클래스 이벤트가 아니라 툴 바 이벤트로 처리)
+USER_COMMAND (OK_CODE로 작동) (클래스 이벤트가 아니라 Menu Bar PAI 이벤트로 처리)
     TOOLBAR에 아이콘 만들고 -> 
     - APPEND 기능
     - SAVE 기능

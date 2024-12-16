@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZEDR20_HW001_F01
+*&  Include           ZEDR20_HW003_F01
 *&---------------------------------------------------------------------*
 
 FORM SET_INIT .
@@ -814,4 +814,107 @@ FORM MODIFY_DATA_R2 .
 
   ENDLOOP.
 
+ENDFORM.
+FORM generate_pdf_using_excel_ole USING is_data TYPE gs_order_alv.
+  TYPE-POOLS: ole2.
+
+  DATA: lv_temp_dir   TYPE string,
+        lv_user_dir   TYPE string,
+        lv_filename   TYPE string,
+        lv_pdfname    TYPE string,
+        lv_template   TYPE string,
+        lv_rc         TYPE i,
+        ls_wwwdata    TYPE wwwdata.
+
+  "1. 임시 디렉토리 획득
+  " 대화식 모드 확인
+  IF sy-batch = 'X'.
+    MESSAGE '해당 프로그램은 대화식 모드에서만 실행 가능합니다.' TYPE 'E'.
+  ENDIF.
+
+  " 임시 디렉토리 획득
+  CALL METHOD cl_gui_frontend_services=>get_temp_directory
+    CHANGING
+      TEMP_DIR = lv_temp_dir
+    EXCEPTIONS
+      others = 1.
+
+  " 오류 발생 시 기본 경로 설정
+  IF sy-subrc <> 0 OR lv_temp_dir IS INITIAL.
+    "MESSAGE '임시 디렉토리를 가져오는 중 오류가 발생했습니다.' TYPE 'I'.
+    lv_temp_dir = 'C:/TEMP'. " 기본 경로 설정
+  ENDIF.
+
+  "2. 사용자 로컬 폴더 선택 (바탕화면 등)
+  CALL METHOD cl_gui_frontend_services=>directory_browse
+    CHANGING
+      selected_FOLDER = lv_user_dir.
+  IF sy-subrc <> 0 OR lv_user_dir IS INITIAL.
+    MESSAGE '저장할 로컬 폴더를 선택하지 않았습니다.' TYPE 'E'.
+  ENDIF.
+
+  "4. Excel OLE 초기화
+  DATA: excel       TYPE ole2_object,
+        workbooks   TYPE ole2_object,
+        workbook    TYPE ole2_object,
+        worksheets  TYPE ole2_object,
+        worksheet   TYPE ole2_object.
+
+  CREATE OBJECT excel 'Excel.Application' NO FLUSH.
+  IF sy-subrc <> 0.
+    MESSAGE '엑셀 OLE 객체 생성 실패' TYPE 'E'.
+  ENDIF.
+
+  SET PROPERTY OF excel 'Visible' = 0.
+
+  "3. 새로운 워크북 생성
+  GET PROPERTY OF excel 'Workbooks' = workbooks.
+  CALL METHOD OF workbook 'Add'.
+  CALL METHOD OF workbook 'Worksheets' = worksheet EXPORTING #1 = 1.
+
+
+
+  "5. 템플릿 시트에 데이터 설정
+  PERFORM set_cell_value USING worksheet 'A1' '주문번호'.
+  PERFORM set_cell_value USING worksheet 'A2' '회원ID : '.
+  PERFORM set_cell_value USING worksheet 'A3' '제품번호 : '.
+  PERFORM set_cell_value USING worksheet 'A4' '제품명 : '.
+  PERFORM set_cell_value USING worksheet 'A5' '매출금액 : '.
+  PERFORM set_cell_value USING worksheet 'A6' '판매일자 : '.
+
+
+  "6. PDF 파일명 설정 (주문번호를 파일명에 활용)
+  DATA(lv_pdf_file) = lv_user_dir && '\' && is_data-zordno && '.pdf'.
+
+  "7. PDF로 내보내기 (0 = xlTypePDF)
+  "5. PDF로 내보내기
+  CALL METHOD OF workbook 'ExportAsFixedFormat'
+    EXPORTING
+      #1 = 0            " xlTypePDF
+      #2 = lv_pdf_file.
+
+  "8. 엑셀 종료
+  CALL METHOD OF workbook 'Close' EXPORTING #1 = 0.
+  CALL METHOD OF excel 'Quit'.
+
+  FREE OBJECT worksheet.
+  FREE OBJECT workbook.
+  FREE OBJECT excel.
+
+  "10. 완료 메시지
+  MESSAGE |PDF 생성 완료: { lv_pdf_file }| TYPE 'I'.
+
+ENDFORM.
+
+"-----------------------------------------
+" Cell 값 설정용 폼 루틴 예제
+"-----------------------------------------
+FORM set_cell_value USING io_worksheet TYPE ole2_object
+                           iv_cell     TYPE string
+                           iv_value    TYPE string.
+  DATA range TYPE ole2_object.
+
+  CALL METHOD OF io_worksheet 'Range' = range EXPORTING #1 = iv_cell.
+  SET PROPERTY OF range 'Value' = iv_value.
+  FREE OBJECT range.
 ENDFORM.
