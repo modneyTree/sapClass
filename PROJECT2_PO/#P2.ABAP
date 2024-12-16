@@ -49,15 +49,14 @@ START-OF-SELECTION.
         EXIT.
       ENDIF.
     WHEN P_R2.
-*      PERFORM MAKE_DATA.
-*      PERFORM GET_DATA.
+      PERFORM GET_DATA.
 *      PERFORM MODIFY_DATA.
 *      IF GT_MASTER_ALL[] IS INITIAL.
 *        MESSAGE I001.
 *        EXIT.
 *      ENDIF.
 
-      IF GT_PO_HEAD[] IS NOT INITIAL.
+      IF GT_PO_ITEM[] IS NOT INITIAL.
         CALL SCREEN 200.
       ELSE.
         MESSAGE I000.
