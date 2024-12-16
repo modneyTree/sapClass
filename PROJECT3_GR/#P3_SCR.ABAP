@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZPROJECT20_PO_SCR
+*&  Include           ZPROJECT20_GR_SCR
 *&---------------------------------------------------------------------*
 
 SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME TITLE TEXT-B01.

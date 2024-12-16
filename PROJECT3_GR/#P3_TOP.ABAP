@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZPROJECT20_PO_TOP
+*&  Include           ZPROJECT20_GR_TOP
 *&---------------------------------------------------------------------*
 TABLES : ZEDT20_P001.
 TABLES : ZEDT20_P002.
@@ -10,17 +10,6 @@ TABLES : ZEDT20P_200.
 
 CONSTANTS : C_X TYPE CHAR1 VALUE 'X'.
 
-"TABLE ZEDT20_P004
-*DATA : BEGIN OF GS_PO_HEAD,
-*  EBELN LIKE ZEDT20_P004-EBELN, "구매오더번호
-*  ZLFB1_BUKRS LIKE ZEDT20_P004-ZLFB1_BUKRS, " 회사코드
-*  EKGRP LIKE ZEDT20_P004-EKGRP, "구매그룹
-*  EKORG LIKE ZEDT20_P004-EKORG, "구매조직
-*  LIFNR LIKE ZEDT20_P004-LIFNR, "구매처
-*  BEDAT LIKE ZEDT20_P004-BEDAT, "증빙일
-*  WAERS LIKE ZEDT20_P004-WAERS, "통화
-*  END OF GS_PO_HEAD.
-*DATA : GT_PO_HEAD LIKE TABLE OF GS_PO_HEAD.
 
 DATA: GS_PO_HEAD TYPE ZEDT20_P004,       " ZEDT20_P004 테이블과 동일한 구조 사용
       GT_PO_HEAD TYPE TABLE OF ZEDT20_P004. " 내부 테이블 선언
