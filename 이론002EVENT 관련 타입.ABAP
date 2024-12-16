@@ -40,4 +40,10 @@ TTB_BUTTON 구조체
     FUNCTION
     ICON
     QUICKINFO
+
+EVENT USER_COMMAND
+파라미터
+    E_UCOMM TYPE SY_UCOMM
+    
+
     
