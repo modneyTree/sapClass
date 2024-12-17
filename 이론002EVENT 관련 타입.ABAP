@@ -1,3 +1,10 @@
+TYPE 목록(암기)
+    LVC_S_MODI. " ALV 그리드 수정 구조체
+    LVC_S_STBL. " ALV 그리드 테이블 표시 구조체
+
+
+
+
 038 메서드 REFRESH_TABLE_DISPLAY
 사용예시
     DATA : LS_STABLE TYPE LVC_S_STBL.
