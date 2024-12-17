@@ -1,11 +1,23 @@
-5개를 만든다.
+DATA: BEGIN OF GS_PO_OUTPUT_ALV,
+    EBELN     TYPE ZEDT20_P004-EBELN,    " 구매오더번호
+    EBELP     TYPE ZEDT20_P005-EBELP,    " 품목번호(PO아이템)
+    LIFNR     TYPE ZEDT20_P004-LIFNR,    " 구매처(거래처번호)
+    BEDAT     TYPE ZEDT20_P004-BEDAT,    " 증빙일
+    WAERS     TYPE ZEDT20_P004-WAERS,    " 통화
+    ZMATNR    TYPE ZEDT20_P005-ZMATNR,   " 자재번호
+    ZMATNAME  TYPE ZEDT20_P005-ZMATNAME, " 자재명
+    MENGE     TYPE ZEDT20_P005-MENGE,    " 수량
+    ZMEINS    TYPE ZEDT20_P005-ZMEINS,   " 단위
+    STPRS     TYPE ZEDT20_P005-STPRS,    " 단가
+    PRDAT     TYPE ZEDT20_P005-PRDAT,    " 납품일
+    ZWERKS    TYPE ZEDT20_P005-ZWERKS,   " 플랜트
+    ZLGORT    TYPE ZEDT20_P005-ZLGORT,   " 저장위치
+END OF GS_PO_OUTPUT_ALV.
+DATA: GT_PO_OUTPUT_ALV TYPE TABLE OF GS_PO_OUTPUT_ALV.
 
-스탠다드
+ZEDT20_P004, ZEDT20_P005 를 조인해서 데이터를 가져와야 한다. (조인 속성 구매오더 번호)
+GT_PO_OUTPUT_ALV에 입어 넣는다. 
 
-
-자재마스터는 이미 만들어져 있어야 함
-
-ZLFA1_20
-
-
+PO헤더(ZEDT20_P004) : 구매오더번호 품목 구매처 증빙일 통화
+POITEM(ZEDT20_P005) : 구매오더번호 자재번호 자재명 수량 단위 단가 (UP) 납품일 플랜트 저장위치
 
