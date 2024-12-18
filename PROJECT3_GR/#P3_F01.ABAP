@@ -735,7 +735,10 @@ ENDFORM.
 FORM GOOD_DATA .
 
   DATA: LV_ZMBLNR     TYPE ZEDT20_P006-ZMBLNR,
-        LV_ZMBLNR_NUM TYPE I.
+        LV_BUKRS      TYPE ZEDT20_P004-ZLFB1_BUKRS,   " 회사코드
+        LV_LIFNR      TYPE ZEDT20_P004-LIFNR,         " 구매처번호
+        LV_ZMBLNR_NUM TYPE I,
+        LV_ITEM_LIST  TYPE STRING.                    " 품목 번호 리스트
 
   " 1) ZMBLNR 최대값 가져오기
   SELECT MAX( ZMBLNR ) INTO LV_ZMBLNR FROM ZEDT20_P006.
@@ -743,8 +746,7 @@ FORM GOOD_DATA .
   IF SY-SUBRC <> 0 OR LV_ZMBLNR IS INITIAL.
     LV_ZMBLNR_NUM = 1.
   ELSE.
-    LV_ZMBLNR_NUM = LV_ZMBLNR.
-    LV_ZMBLNR_NUM = LV_ZMBLNR_NUM + 1.
+    LV_ZMBLNR_NUM = LV_ZMBLNR + 1.
   ENDIF.
 
   " 정수를 문자열로 변환 (길이 10 가정)
@@ -760,6 +762,13 @@ FORM GOOD_DATA .
   " 부분 입고 구현 : GS_PO_OUTPUT_ALV 의 해당 줄을 제거한다.
   " ZCHECKBOX = 'X'인 경우 -> 입고 헤더와 아이템 테이블에 저장
   LOOP AT GT_PO_OUTPUT_ALV INTO GS_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
+
+    " 2. ZEDT20_P004에서 구매처번호, 통화, 회사코드 가져오기
+    CLEAR: LV_BUKRS, LV_LIFNR.
+    SELECT SINGLE ZLFB1_BUKRS LIFNR
+      INTO (LV_BUKRS, LV_LIFNR)
+      FROM ZEDT20_P004
+      WHERE EBELN = GS_PO_OUTPUT_ALV-EBELN.
 
     " 1. 입고 헤더 데이터 저장
     CLEAR GS_GR_HEAD_SAVE.
@@ -779,23 +788,26 @@ FORM GOOD_DATA .
     GS_GR_ITEM_SAVE-ZWERKS = GS_PO_OUTPUT_ALV-ZWERKS.
     GS_GR_ITEM_SAVE-ZLGORT = GS_PO_OUTPUT_ALV-ZLGORT.
     GS_GR_ITEM_SAVE-MENGE  = GS_PO_OUTPUT_ALV-MENGE.
+    GS_GR_ITEM_SAVE-WAERS  = GS_PO_OUTPUT_ALV-WAERS.
     GS_GR_ITEM_SAVE-MEINS  = GS_PO_OUTPUT_ALV-ZMEINS.
+    GS_GR_ITEM_SAVE-ZLIFNR  = LV_LIFNR.
+    GS_GR_ITEM_SAVE-ZLFB1_BUKRS = LV_BUKRS.
+    GS_GR_ITEM_SAVE-DMBTR  = GS_PO_OUTPUT_ALV-MENGE * GS_PO_OUTPUT_ALV-STPRS.
 
     GS_GR_ITEM_SAVE-EBELN  = GS_PO_OUTPUT_ALV-EBELN.
-    "GS_GR_ITEM_SAVE-ZLFB1_BUKRS  = GS_PO_OUTPUT_ALV-ZLFB1_BUKRS.
-    GS_GR_ITEM_SAVE-ZGJAHR  = SY-DATUM. " 회계연도 문서작성일
-    GS_GR_ITEM_SAVE-ZBELNR  = 'WE'.
-    GS_GR_ITEM_SAVE-SHKZG  = 'H'.  " 차변 대변
-    "GS_GR_ITEM_SAVE-DMBTR  = GS_PO_OUTPUT_ALV-. " 금액
+    GS_GR_ITEM_SAVE-ZGJAHR = SY-DATUM.       " 회계연도 문서작성일
+    GS_GR_ITEM_SAVE-ZBELNR = 'WE'.
+    GS_GR_ITEM_SAVE-SHKZG  = 'H'.            " 차변 대변
     APPEND GS_GR_ITEM_SAVE TO GT_GR_ITEM_SAVE.
 
-    "GS_GR_ITEM_SAVE-SHKZG = 'S'.
-    "APPEND GS_GR_ITEM_SAVE TO GT_GR_ITEM_SAVE.
+    " 품목 번호 수집
+    CONCATENATE LV_ITEM_LIST GS_PO_OUTPUT_ALV-EBELP INTO LV_ITEM_LIST SEPARATED BY ', '.
 
   ENDLOOP.
 
   " 데이터베이스에 저장
   IF LINES( GT_GR_HEAD_SAVE ) > 0 AND LINES( GT_GR_ITEM_SAVE ) > 0.
+
     " 헤더 테이블 저장
     LOOP AT GT_GR_HEAD_SAVE INTO GS_GR_HEAD_SAVE.
       INSERT ZEDT20_P006 FROM GS_GR_HEAD_SAVE.
@@ -827,14 +839,17 @@ FORM GOOD_DATA .
       ENDIF.
     ENDLOOP.
 
-    DELETE GT_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.  "
+    DELETE GT_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
 
-    MESSAGE '부분 입고 데이터가 성공적으로 저장되었습니다.' TYPE 'S'.
+    " 품목 번호와 함께 메시지 출력
+    MESSAGE |부분 입고 데이터가 성공적으로 저장되었습니다. 품목 번호: { LV_ITEM_LIST }| TYPE 'S'.
+
   ELSE.
     MESSAGE '저장된 데이터가 없습니다.' TYPE 'I'.
   ENDIF.
 
 ENDFORM.
+
 *&---------------------------------------------------------------------*
 *&      Form  REGR_DATA
 *&---------------------------------------------------------------------*

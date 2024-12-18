@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZPROJECT20_IR_PBO
+*&  Include           ZPROJECT20_BP_PBO
 *&---------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
 *&      Module  STATUS_0100  OUTPUT
@@ -40,7 +40,7 @@ MODULE SET_ALV2 OUTPUT.
 
   IF GC_DOCKING IS INITIAL.
     PERFORM CREATE_OBJECT.
-    PERFORM FIELD_CATALOG.
+    PERFORM FIELD_CATALOG2.
     PERFORM ALV_LAYOUT.
 *    PERFORM ALV_SORT.
     PERFORM CLASS_EVENT.

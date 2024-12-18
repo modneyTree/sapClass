@@ -55,7 +55,7 @@ START-OF-SELECTION.
 *        EXIT.
 *      ENDIF.
 
-      IF GT_GENERAL[] IS NOT INITIAL.
+      IF GT_MASTER_ALL[] IS NOT INITIAL.
         CALL SCREEN 200.
       ELSE.
         MESSAGE I000.

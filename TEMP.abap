@@ -1,9 +1,11 @@
-FORM GDIR_DATA . "입고 데이터 저장
+FORM GDIR_DATA .
 
   DATA: LV_ZINVOICE_NO     TYPE ZEDT20_P008-ZINVOICE_NO,
         LV_ZINVOICE_NUM    TYPE I,
         LV_ZBELNR          TYPE ZEDT20_P010-ZBELNR,
-        LV_ZBELNR_NUM      TYPE I.
+        LV_BUKRS           TYPE ZEDT20_P004-ZLFB1_BUKRS,   " 회사코드
+        LV_ZBELNR_NUM      TYPE I,
+        LV_INVOICE_LIST    TYPE STRING.                    " 송장번호 리스트
 
   " 1) ZINVOICE_NO 최대값 가져오기
   SELECT MAX( ZINVOICE_NO ) INTO LV_ZINVOICE_NO FROM ZEDT20_P008.
@@ -11,8 +13,7 @@ FORM GDIR_DATA . "입고 데이터 저장
   IF SY-SUBRC <> 0 OR LV_ZINVOICE_NO IS INITIAL.
     LV_ZINVOICE_NUM = 1.
   ELSE.
-    LV_ZINVOICE_NUM = LV_ZINVOICE_NO.
-    LV_ZINVOICE_NUM = LV_ZINVOICE_NUM + 1.
+    LV_ZINVOICE_NUM = LV_ZINVOICE_NO + 1.
   ENDIF.
 
   " 정수를 문자열로 변환 (길이 10 가정)
@@ -31,8 +32,7 @@ FORM GDIR_DATA . "입고 데이터 저장
   IF SY-SUBRC <> 0 OR LV_ZBELNR IS INITIAL.
     LV_ZBELNR_NUM = 1.
   ELSE.
-    LV_ZBELNR_NUM = LV_ZBELNR.
-    LV_ZBELNR_NUM = LV_ZBELNR_NUM + 1.
+    LV_ZBELNR_NUM = LV_ZBELNR + 1.
   ENDIF.
 
   " 정수를 문자열로 변환 (길이 10 가정)
@@ -49,28 +49,42 @@ FORM GDIR_DATA . "입고 데이터 저장
   " ZCHECKBOX = 'X'인 경우 -> 입고 헤더, 아이템, 지급 테이블에 저장
   LOOP AT GT_PO_OUTPUT_ALV INTO GS_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
 
-    " 1. 입고 헤더 데이터 저장
+    " 2. ZEDT20_P004에서 회사코드 가져오기
+    CLEAR: LV_BUKRS.
+    SELECT SINGLE ZLFB1_BUKRS
+      INTO LV_BUKRS
+      FROM ZEDT20_P004
+      WHERE EBELN = GS_PO_OUTPUT_ALV-EBELN.
+
+    " 1. 송장  헤더 데이터 저장
     CLEAR GS_IR_HEAD_SAVE.
     GS_IR_HEAD_SAVE-ZINVOICE_NO = LV_ZINVOICE_NO.
-*    GS_IR_HEAD_SAVE-BUKRS       = GS_PO_OUTPUT_ALV-BUKRS.
+    GS_IR_HEAD_SAVE-BUKRS = LV_BUKRS.
     GS_IR_HEAD_SAVE-EBELN       = GS_PO_OUTPUT_ALV-EBELN.
     GS_IR_HEAD_SAVE-ZBLDAT      = SY-DATUM.       " 증빙일
     GS_IR_HEAD_SAVE-ZBUDAT      = SY-DATUM.       " 전기일
     GS_IR_HEAD_SAVE-ZGJAHR      = SY-DATUM+0(4). " 회계연도 (연도 추출 예시)
     GS_IR_HEAD_SAVE-LIFNR       = GS_PO_OUTPUT_ALV-LIFNR.
+
     APPEND GS_IR_HEAD_SAVE TO GT_IR_HEAD_SAVE.
 
-    " 2. 입고 아이템 데이터 저장
+    " 송장 번호 누적
+    CONCATENATE LV_INVOICE_LIST LV_ZINVOICE_NO INTO LV_INVOICE_LIST SEPARATED BY ', '.
+
+    " 2. 송장 아이템 데이터 저장
     CLEAR GS_IR_ITEM_SAVE.
     GS_IR_ITEM_SAVE-ZINVOICE_NO = LV_ZINVOICE_NO.
-*    GS_IR_ITEM_SAVE-BUKRS       = GS_PO_OUTPUT_ALV-BUKRS.
+    GS_IR_ITEM_SAVE-BUKRS       = LV_BUKRS.
     GS_IR_ITEM_SAVE-EBELN       = GS_PO_OUTPUT_ALV-EBELN.
     GS_IR_ITEM_SAVE-ZWERKS      = GS_PO_OUTPUT_ALV-ZWERKS.
-*    GS_IR_ITEM_SAVE-DMBTR        = GS_PO_OUTPUT_ALV-DMBTR.
-*    GS_IR_ITEM_SAVE-MWSTS        = GS_PO_OUTPUT_ALV-MWSTS.
-*    GS_IR_ITEM_SAVE-WRBTR        = GS_PO_OUTPUT_ALV-WRBTR.
+
+    GS_IR_ITEM_SAVE-DMBTR        = GS_PO_OUTPUT_ALV-DMBTR.
+    GS_IR_ITEM_SAVE-MWSTS        = GS_PO_OUTPUT_ALV-MWSTS.
+    GS_IR_ITEM_SAVE-WRBTR        = GS_PO_OUTPUT_ALV-DMBTR + GS_PO_OUTPUT_ALV-MWSTS.
+
     GS_IR_ITEM_SAVE-WAERS        = GS_PO_OUTPUT_ALV-WAERS.
-*    GS_IR_ITEM_SAVE-ZLFM1_MWSKZ  = GS_PO_OUTPUT_ALV-ZLFM1_MWSKZ.
+
+    GS_IR_ITEM_SAVE-ZLFM1_MWSKZ  = GS_PO_OUTPUT_ALV-ZLFM1_MWSKZ.
     GS_IR_ITEM_SAVE-ZBELNR       = LV_ZBELNR.
     GS_IR_ITEM_SAVE-ZBLART       = 'WE'.                " 전표유형
     GS_IR_ITEM_SAVE-ZLFA1_LIFNR  = GS_PO_OUTPUT_ALV-LIFNR.
@@ -78,7 +92,7 @@ FORM GDIR_DATA . "입고 데이터 저장
 
     " 3. 지급 데이터 저장
     CLEAR GS_PAY_SAVE.
-*    GS_PAY_SAVE-BUKRS         = GS_PO_OUTPUT_ALV-BUKRS.
+    GS_PAY_SAVE-BUKRS        = LV_BUKRS.
     GS_PAY_SAVE-ZLFA1_LIFNR   = GS_PO_OUTPUT_ALV-LIFNR.
     GS_PAY_SAVE-ZGJAHR        = SY-DATUM+0(4).      " 회계연도 (연도 추출 예시)
     GS_PAY_SAVE-ZBELNR        = LV_ZBELNR.
@@ -87,10 +101,10 @@ FORM GDIR_DATA . "입고 데이터 저장
     GS_PAY_SAVE-WAERS         = GS_PO_OUTPUT_ALV-WAERS.
     GS_PAY_SAVE-ZBLART        = 'WE'.                " 전표유형
     GS_PAY_SAVE-SHKZG         = 'H'.                 " 차변대변
-*    GS_PAY_SAVE-ZLFM1_MWSKZ   = GS_PO_OUTPUT_ALV-ZLFM1_MWSKZ.
-*    GS_PAY_SAVE-DMBTR         = GS_PO_OUTPUT_ALV-DMBTR.
-*    GS_PAY_SAVE-MWSTS         = GS_PO_OUTPUT_ALV-MWSTS.
-    GS_PAY_SAVE-SGTXT         = '입고 지급'.          " 텍스트 (적절히 수정)
+    GS_PAY_SAVE-ZLFM1_MWSKZ   = GS_PO_OUTPUT_ALV-ZLFM1_MWSKZ.
+    GS_PAY_SAVE-DMBTR         = GS_PO_OUTPUT_ALV-DMBTR.
+    GS_PAY_SAVE-MWSTS         = GS_PO_OUTPUT_ALV-MWSTS.
+    GS_PAY_SAVE-SGTXT         = '송장처리'.          " 텍스트
     GS_PAY_SAVE-EBELN         = GS_PO_OUTPUT_ALV-EBELN.
     GS_PAY_SAVE-ZFBDT         = SY-DATUM.            " 지급기산일
     APPEND GS_PAY_SAVE TO GT_PAY_SAVE.
@@ -102,50 +116,9 @@ FORM GDIR_DATA . "입고 데이터 저장
      LINES( GT_IR_ITEM_SAVE ) > 0 AND
      LINES( GT_PAY_SAVE ) > 0.
 
-    " 1. 입고 헤더 테이블 저장
-    LOOP AT GT_IR_HEAD_SAVE INTO GS_IR_HEAD_SAVE.
-      INSERT ZEDT20_P008 FROM GS_IR_HEAD_SAVE.
-      IF SY-SUBRC <> 0.
-        MESSAGE '입고 헤더 저장 실패' TYPE 'E'.
-        EXIT.
-      ENDIF.
-    ENDLOOP.
+    " 데이터 저장 성공 시 송장 번호 출력
+    MESSAGE |입고 데이터가 성공적으로 저장되었습니다. 송장 번호: { LV_INVOICE_LIST }| TYPE 'S'.
 
-    " 2. 입고 아이템 테이블 저장
-    LOOP AT GT_IR_ITEM_SAVE INTO GS_IR_ITEM_SAVE.
-      INSERT ZEDT20_P009 FROM GS_IR_ITEM_SAVE.
-      IF SY-SUBRC <> 0.
-        MESSAGE '입고 아이템 저장 실패' TYPE 'E'.
-        EXIT.
-      ENDIF.
-    ENDLOOP.
-
-    " 3. 지급 테이블 저장
-    LOOP AT GT_PAY_SAVE INTO GS_PAY_SAVE.
-      INSERT ZEDT20_P010 FROM GS_PAY_SAVE.
-      IF SY-SUBRC <> 0.
-        MESSAGE '지급 데이터 저장 실패' TYPE 'E'.
-        EXIT.
-      ENDIF.
-    ENDLOOP.
-
-    " 4. ZEDT20_P005의 IRSTATUS를 2로 업데이트
-    LOOP AT GT_PO_OUTPUT_ALV INTO GS_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
-      UPDATE ZEDT20_P005
-        SET IRSTATUS = '2'
-        WHERE EBELN = GS_PO_OUTPUT_ALV-EBELN
-          AND EBELP = GS_PO_OUTPUT_ALV-EBELP.
-
-      IF SY-SUBRC <> 0.
-        MESSAGE 'ZEDT20_P005 업데이트 실패' TYPE 'E'.
-        EXIT.
-      ENDIF.
-    ENDLOOP.
-
-    " 5. 처리된 PO 출력 ALV 데이터 삭제
-    DELETE GT_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
-
-    MESSAGE '입고 데이터가 성공적으로 저장되었습니다.' TYPE 'S'.
   ELSE.
     MESSAGE '저장된 데이터가 없습니다.' TYPE 'I'.
   ENDIF.
