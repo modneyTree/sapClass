@@ -1,9 +1,9 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZPROJECT20_PO_SCR
+*&  Include           ZPROJECT20_IR_SCR
 *&---------------------------------------------------------------------*
 
 SELECTION-SCREEN BEGIN OF BLOCK B1 WITH FRAME TITLE TEXT-B01.
-  PARAMETERS : P_EBELN LIKE ZEDT20_P004-EBELN DEFAULT '0000000001' MODIF ID M1.
+  PARAMETERS : P_EBELN LIKE ZEDT20_P004-EBELN DEFAULT '1' MODIF ID M1.
   PARAMETERS : P_WERKS LIKE ZEDT20_P004-WAERS DEFAULT '1000' MODIF ID M1.   " 플랜트
   PARAMETERS : P_BLDAT LIKE ZEDT20_P006-ZBLDAT DEFAULT '20240101' MODIF ID M1.   " 입고처리일
 

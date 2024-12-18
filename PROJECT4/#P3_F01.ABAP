@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include           ZPROJECT20_GR_F01
+*&  Include           ZPROJECT20_IR_F01
 *&---------------------------------------------------------------------*
 *&---------------------------------------------------------------------*
 *&      Form  SET_INIT
@@ -69,6 +69,45 @@ FORM GET_DATA .
   SELECT SINGLE * FROM ZEDT20_P004
     INTO LS_HEADER
     WHERE EBELN = P_EBELN.
+
+  IF SY-SUBRC <> 0.
+    " 해당 EBELN에 대한 헤더가 없으면 종료
+    EXIT.
+  ENDIF.
+
+  " 3) LOOP를 돌며 헤더 필드 덮어쓰기
+  LOOP AT GT_PO_OUTPUT_ALV INTO LS_ITEM.
+    LS_ITEM-LIFNR = LS_HEADER-LIFNR.
+    LS_ITEM-BEDAT = LS_HEADER-BEDAT.
+    LS_ITEM-WAERS = LS_HEADER-WAERS.
+    " 필요 시 추가 헤더 필드를 매핑
+    MODIFY GT_PO_OUTPUT_ALV FROM LS_ITEM.
+  ENDLOOP.
+
+ENDFORM.
+
+FORM GET_DATA2 .
+
+  DATA: LS_HEADER   TYPE ZEDT20_P004,
+        LT_HEADER   TYPE TABLE OF ZEDT20_P004,
+        LS_ITEM     LIKE GS_PO_OUTPUT_ALV.
+
+  CLEAR GT_PO_OUTPUT_ALV.
+
+  " 1) 아이템 데이터 조회
+  SELECT * FROM ZEDT20_P005
+    INTO CORRESPONDING FIELDS OF TABLE GT_PO_OUTPUT_ALV
+    WHERE ( EBELN = P_EBELN2 AND GRSTATUS = 2 ).
+
+  IF SY-SUBRC <> 0.
+    " 해당 EBELN에 대한 아이템이 없으면 종료
+    EXIT.
+  ENDIF.
+
+  " 2) 헤더 데이터 조회 (1:1 관계 가정, SINGLE 사용)
+  SELECT SINGLE * FROM ZEDT20_P004
+    INTO LS_HEADER
+    WHERE EBELN = P_EBELN2.
 
   IF SY-SUBRC <> 0.
     " 해당 EBELN에 대한 헤더가 없으면 종료
@@ -724,13 +763,11 @@ FORM GOOD_DATA .
 
     " 1. 입고 헤더 데이터 저장
     CLEAR GS_GR_HEAD_SAVE.
-    " 자동 채번한 입고문서번호 할당
     GS_GR_HEAD_SAVE-ZMBLNR = LV_ZMBLNR.
-    GS_GR_HEAD_SAVE-ZMJAHR = SY-DATUM(4).    " 입고연도 (현재 년도)
-    GS_GR_HEAD_SAVE-ZBLART = 'WE'.           " 전표유형 (입고 전표 유형, 예시)
+    GS_GR_HEAD_SAVE-ZMJAHR = SY-DATUM(4).    " 입고연도
+    GS_GR_HEAD_SAVE-ZBLART = 'WE'.           " 전표유형
     GS_GR_HEAD_SAVE-ZBLDAT = SY-DATUM.       " 증빙일
     GS_GR_HEAD_SAVE-ZBUDAT = SY-DATUM.       " 전기일
-
     APPEND GS_GR_HEAD_SAVE TO GT_GR_HEAD_SAVE.
 
     " 2. 입고 아이템 데이터 저장
@@ -744,10 +781,16 @@ FORM GOOD_DATA .
     GS_GR_ITEM_SAVE-MENGE  = GS_PO_OUTPUT_ALV-MENGE.
     GS_GR_ITEM_SAVE-MEINS  = GS_PO_OUTPUT_ALV-ZMEINS.
 
+    GS_GR_ITEM_SAVE-EBELN  = GS_PO_OUTPUT_ALV-EBELN.
+    "GS_GR_ITEM_SAVE-ZLFB1_BUKRS  = GS_PO_OUTPUT_ALV-ZLFB1_BUKRS.
+    GS_GR_ITEM_SAVE-ZGJAHR  = SY-DATUM. " 회계연도 문서작성일
+    GS_GR_ITEM_SAVE-ZBELNR  = 'WE'.
+    GS_GR_ITEM_SAVE-SHKZG  = 'H'.  " 차변 대변
+    "GS_GR_ITEM_SAVE-DMBTR  = GS_PO_OUTPUT_ALV-. " 금액
     APPEND GS_GR_ITEM_SAVE TO GT_GR_ITEM_SAVE.
 
-*    DELETE GT_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
-    "ZEDT20_P005의 해당 행을 GRSTATUS = 2로 바꾼다(1 입고전, 2 입고후) : EBELN(구매오더번호), EBELP(품목번호) 로 찾으면 될 듯
+    "GS_GR_ITEM_SAVE-SHKZG = 'S'.
+    "APPEND GS_GR_ITEM_SAVE TO GT_GR_ITEM_SAVE.
 
   ENDLOOP.
 
@@ -771,9 +814,56 @@ FORM GOOD_DATA .
       ENDIF.
     ENDLOOP.
 
+    " 입고 완료 후 ZEDT20_P005의 GRSTATUS를 2로 업데이트
+    LOOP AT GT_PO_OUTPUT_ALV INTO GS_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
+      UPDATE ZEDT20_P005
+        SET GRSTATUS = '2'
+        WHERE EBELN = GS_PO_OUTPUT_ALV-EBELN
+          AND EBELP = GS_PO_OUTPUT_ALV-EBELP.
+
+      IF SY-SUBRC <> 0.
+        MESSAGE 'ZEDT20_P005 업데이트 실패' TYPE 'E'.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+
+    DELETE GT_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.  "
+
     MESSAGE '부분 입고 데이터가 성공적으로 저장되었습니다.' TYPE 'S'.
   ELSE.
     MESSAGE '저장된 데이터가 없습니다.' TYPE 'I'.
   ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  REGR_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+  " 취소를 눌렀을 때 GT_PO_OUTPUT_ALV 인터널 테이블에서 삭제를 하고 005 테이블의 GRSTATUS 값을 1로 바꾼다.
+FORM REGR_DATA .
+
+  LOOP AT GT_PO_OUTPUT_ALV INTO GS_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
+
+    " ZEDT20_P005의 GRSTATUS를 1로 업데이트
+    UPDATE ZEDT20_P005
+      SET GRSTATUS = '1'
+      WHERE EBELN = GS_PO_OUTPUT_ALV-EBELN
+        AND EBELP = GS_PO_OUTPUT_ALV-EBELP.
+
+    IF SY-SUBRC <> 0.
+      MESSAGE 'ZEDT20_P005 업데이트(취소) 실패' TYPE 'E'.
+      EXIT.
+    ENDIF.
+
+  ENDLOOP.
+
+  " 체크된 행 삭제
+  DELETE GT_PO_OUTPUT_ALV WHERE ZCHECKBOX = 'X'.
+
+  MESSAGE '입고 취소 완료: GRSTATUS 값이 복원되었습니다.' TYPE 'S'.
 
 ENDFORM.

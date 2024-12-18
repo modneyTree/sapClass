@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*&  Include          ZEDT20_P004 ZPROJECT20_PO_TOP
+*&  Include           ZPROJECT20_PO_TOP
 *&---------------------------------------------------------------------*
 TABLES : ZEDT20_P001.
 TABLES : ZEDT20_P002.
@@ -116,6 +116,27 @@ DATA: BEGIN OF GS_GR_ITEM,
     DMBTR LIKE ZEDT20_P007-DMBTR,     " 금액
     END OF GS_GR_ITEM.
 DATA : GT_GR_ITEM LIKE TABLE OF GS_GR_ITEM.
+
+DATA: BEGIN OF GS_GR_ITEM_ALV,
+    ZCHECKBOX TYPE C LENGTH 1,         " 체크박스
+    ZMBLNR LIKE ZEDT20_P007-ZMBLNR,    " 입고문서번호
+    ZMJAHR LIKE ZEDT20_P007-ZMJAHR,    " 회계연도
+    EBELP LIKE ZEDT20_P007-EBELP,     " 아이템번호
+    ZMATNR  LIKE ZEDT20_P007-ZMATNR,    " 제품번호
+    ZWERKS  LIKE ZEDT20_P007-ZWERKS,    " 플랜트
+    ZLGORT  LIKE ZEDT20_P007-ZLGORT,    " 저장위치
+    ZLIFNR  LIKE ZEDT20_P007-ZLIFNR,    " 구매처번호
+    WAERS  LIKE ZEDT20_P007-WAERS,     " 통화
+    MENGE LIKE ZEDT20_P007-MENGE,     " 수량
+    MEINS LIKE ZEDT20_P007-MEINS,     " 단위
+    EBELN LIKE ZEDT20_P007-EBELN,     " 구매오더번호
+    ZLFB1_BUKRS LIKE ZEDT20_P007-ZLFB1_BUKRS, " 회사코드
+    ZGJAHR  LIKE ZEDT20_P007-ZGJAHR,    " 회계연도
+    ZBELNR  LIKE ZEDT20_P007-ZBELNR,    " 전표번호
+    SHKZG LIKE ZEDT20_P007-SHKZG,     " 차변대변
+    DMBTR LIKE ZEDT20_P007-DMBTR,     " 금액
+    END OF GS_GR_ITEM_ALV.
+DATA : GT_GR_ITEM_ALV LIKE TABLE OF GS_GR_ITEM_ALV.
 
 "SAVE 용 데이터 선언
 DATA : GS_PO_HEAD_SAVE TYPE ZEDT20_P004,       " ZEDT20_P004 테이블과 동일한 구조 사용

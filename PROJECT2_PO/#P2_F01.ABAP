@@ -586,7 +586,7 @@ ENDFORM.
       CLEAR GS_PO_INPUT.
     ENDIF.
 
-        " 납품일 정합성 체크
+    " 납품일 정합성 체크
     IF LS_MODI-FIELDNAME = 'PRDAT'.
       DATA LV_PRDAT TYPE D.
       LV_PRDAT = LS_MODI-VALUE.
@@ -601,6 +601,8 @@ ENDFORM.
       ELSE.
         " 납품일이 증빙일보다 이전이면 오류
         GS_PO_INPUT-ZCOLOR = ICON_LED_RED.
+        MESSAGE '납품일이 증빙일보다 이전입니다.' TYPE 'E' DISPLAY LIKE 'I'.
+        EXIT. " 오류 발생 시 루프 종료
       ENDIF.
 
       MODIFY GT_PO_INPUT FROM GS_PO_INPUT INDEX LS_MODI-ROW_ID.
@@ -670,6 +672,13 @@ FORM SAVE_DATA .
   " 정수를 CHAR10으로 변환
   WRITE LV_EBELN_NUM TO LV_EBELN(10).
 
+  " 정수를 CHAR(10) 형식으로 변환하여 선행 0 추가
+  CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+    EXPORTING
+      input  = LV_EBELN
+    IMPORTING
+      output = LV_EBELN.
+
   " GS_PO_HEAD에 데이터 대입
   CLEAR GS_PO_HEAD.
   GS_PO_HEAD-EBELN       = LV_EBELN.
@@ -707,6 +716,31 @@ FORM SAVE_DATA .
     ENDIF.
   ELSE.
     MESSAGE '아이템 데이터가 없습니다.' TYPE 'I'.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  RIGHT_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM RIGHT_DATA.
+
+  DATA: LV_COUNT TYPE I. " 데이터 존재 여부를 확인하기 위한 변수
+
+  " P_EKORG가 ZEDT20_P003 테이블에 존재하는지 확인
+  SELECT COUNT( * ) INTO LV_COUNT
+    FROM ZEDT20_P003
+    WHERE ZLFA1_LIFNR = P_EKORG. " P_EKORG와 일치하는 데이터 확인
+
+  " 정합성 체크 결과
+  IF LV_COUNT > 0.
+    MESSAGE '구매처번호가 존재합니다.' TYPE 'S'. " 정상 메시지
+  ELSE.
+    MESSAGE '구매처번호가 존재하지 않습니다.' TYPE 'E'. " 오류 메시지
   ENDIF.
 
 ENDFORM.

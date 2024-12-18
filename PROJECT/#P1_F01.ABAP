@@ -71,7 +71,7 @@ FORM MAKE_DATA .
 
   " 최대값이 없을 경우 초기값 설정
   IF lv_lifnr IS INITIAL.
-    lv_lifnr = '0000000000'.
+    lv_lifnr = '10000000000'.
   ENDIF.
 
   " 다음 LIFNR 값 계산
